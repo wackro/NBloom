@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-namespace BloomFilter
+namespace NBloom
 {
     public class SimpleBloomFilter
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BloomFilter
+namespace NBloom
 {
     public class HashFunction
     {

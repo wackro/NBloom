@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using Xunit;
 
-namespace BloomFilter.Test
+namespace NBloom.Test
 {
     public class SimpleBloomFilterTests
     {

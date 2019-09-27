@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Runtime.CompilerServices;
-[assembly: InternalsVisibleTo("BloomFilter.Test")]
+[assembly: InternalsVisibleTo("NBloom.Test")]
 
-namespace BloomFilter
+namespace NBloom
 {
     internal class AssemblyInfo
     {
