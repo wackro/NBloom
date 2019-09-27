@@ -52,6 +52,14 @@ namespace NBloom
             return indexes.All(i => BitVector[i]);
         }
 
+        public void Clear()
+        {
+            for(var i = 0; i < BitVector.Length; i++)
+            {
+                BitVector[i] = false;
+            }
+        }
+
         internal int ConvertToIndex(string hash)
         {
             return Math.Abs(hash.GetHashCode()) % BitVector.Length;
