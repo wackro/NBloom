@@ -45,7 +45,7 @@ namespace NBloom
             }
         }
 
-        public bool Test(string value)
+        public bool Contains(string value)
         {
             var indexes = HashFunctions.Select(x => ConvertToIndex(x.GenerateHash(value)));
 
