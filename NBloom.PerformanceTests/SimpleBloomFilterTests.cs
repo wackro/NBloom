@@ -21,7 +21,8 @@ namespace NBloom.PerformanceTests
 
         static void Main(string[] args)
         {
-            Output(MeasureTime(() => b.Add("hello"), 100000, 100));
+            //Output(MeasureTime(() => b.Add("hello"), 100000, 100));
+            Output(MeasureTime(() => b.Clear(), 1000, 10));
 
             Console.ReadLine();
         }

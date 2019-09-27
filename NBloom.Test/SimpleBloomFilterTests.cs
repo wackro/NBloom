@@ -121,7 +121,22 @@ namespace NBloom.Test
                 bloomFilter.Add(i);
             }
 
-            Assert.False(bloomFilter.Test("donkey"));
+            Assert.False(bloomFilter.Contains("donkey"));
+        }
+
+        [Fact]
+        public void Clear__DirtyVector__ResultsInClearedVector()
+        {
+            var bloomfilter = new SimpleBloomFilter(20, GenerateMockHashFunctions(20));
+
+            bloomfilter.BitVector[0] = false;
+            bloomfilter.BitVector[5] = false;
+            bloomfilter.BitVector[10] = false;
+            bloomfilter.BitVector[15] = false;
+
+            bloomfilter.Clear();
+
+            Assert.All(bloomfilter.BitVector, x => Assert.False(x));
         }
 
         private HashFunction[] GenerateMockHashFunctions(int number)

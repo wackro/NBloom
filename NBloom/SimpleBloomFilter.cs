@@ -5,7 +5,7 @@ namespace NBloom
 {
     public class SimpleBloomFilter
     {
-        internal bool[] BitVector { get; }
+        internal bool[] BitVector { get; private set; }
         
         internal HashFunction[] HashFunctions { get; }
 
@@ -54,10 +54,7 @@ namespace NBloom
 
         public void Clear()
         {
-            for(var i = 0; i < BitVector.Length; i++)
-            {
-                BitVector[i] = false;
-            }
+            Enumerable.Range(0, BitVector.Length).Select((x, index) => BitVector[index] = false);
         }
 
         internal int ConvertToIndex(string hash)
