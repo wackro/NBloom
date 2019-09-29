@@ -139,6 +139,17 @@ namespace NBloom.Test
             Assert.All(bloomfilter.BitVector, x => Assert.False(x));
         }
 
+        [Theory]
+        [InlineData(1)]
+        [InlineData(50)]
+        [InlineData(100)]
+        public void CalculateOptimalBitVectorSize__AnySetSize__ReturnsGreaterThanSetSize(uint setSize)
+        {
+            var optimal = SimpleBloomFilter.CalculateOptimalBitVectorSize(setSize, 0.5f);
+
+            Assert.True(optimal > setSize);
+        }
+
         private HashFunction[] GenerateMockHashFunctions(int number)
         {
             var hashFunctions = new HashFunction[number];
