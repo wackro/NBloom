@@ -10,9 +10,9 @@ namespace NBloom.PerformanceTests
         static Stopwatch _stopwatch = new Stopwatch();
         static HashFunction[] hashFunctions = new HashFunction[]
             {
-                new HashFunction(x => x),
-                new HashFunction(x => x + "1"),
-                new HashFunction(x => x + "2"),
+                new HashFunction(x => (uint)x.GetHashCode()),
+                new HashFunction(x => (uint)x.GetHashCode() + 1),
+                new HashFunction(x => (uint)x.GetHashCode() + 2),
             };
 
         static SimpleBloomFilter b = new SimpleBloomFilter(20000, hashFunctions);

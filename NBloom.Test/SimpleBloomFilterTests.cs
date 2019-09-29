@@ -6,8 +6,8 @@ namespace NBloom.Test
 {
     public class SimpleBloomFilterTests
     {
-        private static int c = 0;
-        private readonly Func<string, string> mockHashFunctionDelegate = x => c++.ToString();
+        private static uint c = 0;
+        private readonly Func<string, uint> mockHashFunctionDelegate = x => c++;
 
         [Theory]
         [InlineData(1)]
@@ -69,22 +69,22 @@ namespace NBloom.Test
         }
 
         [Theory]
-        [InlineData("a", 1)]
-        [InlineData("087a9ydsf078y", 50)]
-        [InlineData("9-8hadcc87gasdvg9888asdy8aydd", 9999)]
-        public void ConvertToIndex__AnyValue__MapsToIntegerWithinRangeOfBitVector(string hash, uint bitVectorSize)
+        [InlineData(1, 1)]
+        [InlineData(81973489u, 50)]
+        [InlineData(776911693u, 9999)]
+        public void ConvertToIndex__AnyValue__MapsToIntegerWithinRangeOfBitVector(uint hash, uint bitVectorSize)
         {
             var bloomFilter = new SimpleBloomFilter(bitVectorSize, GenerateMockHashFunctions(1));
 
             var index = bloomFilter.ConvertToIndex(hash);
 
-            Assert.InRange((uint)index, 0u, (uint) bloomFilter.BitVector.Length - 1);
+            Assert.InRange(index, 0u, (uint) bloomFilter.BitVector.Length - 1);
         }
 
         [Theory]
-        [InlineData("a")]
-        [InlineData("067asdftadg78t789afg")]
-        public void ConvertToIndex__IdenticalInputs__ReturnTheSameValue(string hash)
+        [InlineData(1)]
+        [InlineData(71234616)]
+        public void ConvertToIndex__IdenticalInputs__ReturnTheSameValue(uint hash)
         {
             var bloomFilter = new SimpleBloomFilter(5, GenerateMockHashFunctions(2));
 

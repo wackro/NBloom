@@ -9,17 +9,17 @@ namespace NBloom.Test
         [Fact]
         public void HashFunction__NullGenerateHashFunction__ThrowsArgumentNullException()
         {
-            var func = (Func<string, string>)null;
+            var func = (Func<string, uint>)null;
 
             Assert.Throws<ArgumentNullException>(() => new HashFunction(func));
         }
 
         [Theory]
-        [InlineData("a")]
-        [InlineData("067asdftadg78t789afg")]
-        public void HashFunction__GenerateHash__ReturnsSameValueAsStoredFunc(string hashValue)
+        [InlineData(1)]
+        [InlineData(76123944)]
+        public void HashFunction__GenerateHash__ReturnsSameValueAsStoredFunc(uint hash)
         {
-            var func = new Func<string, string>((x) => hashValue);
+            var func = new Func<string, uint>(x => hash);
             var hashFunction = new HashFunction(func);
 
             var resultFromFunc = func("test");

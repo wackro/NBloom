@@ -57,9 +57,9 @@ namespace NBloom
             Enumerable.Range(0, BitVector.Length).Select((x, index) => BitVector[index] = false);
         }
 
-        internal int ConvertToIndex(string hash)
+        internal uint ConvertToIndex(uint hash)
         {
-            return Math.Abs(hash.GetHashCode()) % BitVector.Length;
+            return hash % (uint) BitVector.Length;
         }
     }
 }

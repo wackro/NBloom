@@ -4,9 +4,9 @@ namespace NBloom
 {
     public class HashFunction
     {
-        internal Func<string, string> GenerateHash { get; }
+        internal Func<string, uint> GenerateHash { get; }
 
-        public HashFunction(Func<string, string> generateHash)
+        public HashFunction(Func<string, uint> generateHash)
         {
             if(generateHash == null)
             {
