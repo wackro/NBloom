@@ -11,7 +11,7 @@ namespace NBloom.Test
         {
             var func = (Func<string, uint>)null;
 
-            Assert.Throws<ArgumentNullException>(() => new HashFunction(func));
+            Assert.Throws<ArgumentNullException>(() => new HashFunction<string>(func));
         }
 
         [Theory]
@@ -20,7 +20,7 @@ namespace NBloom.Test
         public void HashFunction__GenerateHash__ReturnsSameValueAsStoredFunc(uint hash)
         {
             var func = new Func<string, uint>(x => hash);
-            var hashFunction = new HashFunction(func);
+            var hashFunction = new HashFunction<string>(func);
 
             var resultFromFunc = func("test");
             var resultFromHashFunctionObject = hashFunction.GenerateHash("test");
