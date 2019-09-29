@@ -15,7 +15,7 @@ namespace NBloom.Test
         [InlineData(999999)]
         public void Initialisation__BitVecorSizeGreaterThanOne__InitialisesBitVectorToThatValue(int bitVectorSize)
         {
-            var bloomFilter = new SimpleBloomFilter((uint)bitVectorSize, GenerateMockHashFunctions(bitVectorSize));
+            var bloomFilter = new SimpleBloomFilter<string>((uint)bitVectorSize, GenerateMockHashFunctions(bitVectorSize));
 
             Assert.Equal(bitVectorSize, bloomFilter.BitVector.Length);
         }
@@ -23,7 +23,7 @@ namespace NBloom.Test
         [Fact]
         public void Initialisation__BitVecorSizeOfOne__ThrowsArgumentException()
         {
-            Assert.Throws<ArgumentException>(() => new SimpleBloomFilter(0));
+            Assert.Throws<ArgumentException>(() => new SimpleBloomFilter<string>(0));
         }
 
         [Theory]
@@ -34,7 +34,7 @@ namespace NBloom.Test
         {
             var expectedInitialValue = false;
 
-            var bloomFilter = new SimpleBloomFilter((uint)bitVectorSize, GenerateMockHashFunctions(bitVectorSize));
+            var bloomFilter = new SimpleBloomFilter<string>((uint)bitVectorSize, GenerateMockHashFunctions(bitVectorSize));
 
             Assert.All(bloomFilter.BitVector, x => Assert.Equal(expectedInitialValue, x));
         }
@@ -42,22 +42,22 @@ namespace NBloom.Test
         [Fact]
         public void Initialisation__NullHashFunctions__ThrowsArgumentNullException()
         {
-            var hashFunctions = (HashFunction[])null;
+            var hashFunctions = (HashFunction<string>[])null;
 
-            Assert.Throws<ArgumentNullException>(() => new SimpleBloomFilter(5, hashFunctions));
+            Assert.Throws<ArgumentNullException>(() => new SimpleBloomFilter<string>(5, hashFunctions));
         }
 
         [Fact]
         public void Initialisation__InitialisedHashFunctionsWithSomeNulls__ThrowsArgumentNullException()
         {
-            var hashFunctions = new HashFunction[]
+            var hashFunctions = new HashFunction<string>[]
             {
-                new HashFunction(mockHashFunctionDelegate),
-                new HashFunction(mockHashFunctionDelegate),
+                new HashFunction<string>(mockHashFunctionDelegate),
+                new HashFunction<string>(mockHashFunctionDelegate),
                 null
             };
 
-            Assert.Throws<ArgumentException>(() => new SimpleBloomFilter(5, hashFunctions));
+            Assert.Throws<ArgumentException>(() => new SimpleBloomFilter<string>(5, hashFunctions));
         }
 
         [Fact]
@@ -65,7 +65,7 @@ namespace NBloom.Test
         {
             var hashFunctions = GenerateMockHashFunctions(3);
 
-            Assert.Throws<ArgumentException>(() => new SimpleBloomFilter(2, hashFunctions));
+            Assert.Throws<ArgumentException>(() => new SimpleBloomFilter<string>(2, hashFunctions));
         }
 
         [Theory]
@@ -74,7 +74,7 @@ namespace NBloom.Test
         [InlineData(776911693u, 9999)]
         public void ConvertToIndex__AnyValue__MapsToIntegerWithinRangeOfBitVector(uint hash, uint bitVectorSize)
         {
-            var bloomFilter = new SimpleBloomFilter(bitVectorSize, GenerateMockHashFunctions(1));
+            var bloomFilter = new SimpleBloomFilter<string>(bitVectorSize, GenerateMockHashFunctions(1));
 
             var index = bloomFilter.ConvertToIndex(hash);
 
@@ -86,7 +86,7 @@ namespace NBloom.Test
         [InlineData(71234616)]
         public void ConvertToIndex__IdenticalInputs__ReturnTheSameValue(uint hash)
         {
-            var bloomFilter = new SimpleBloomFilter(5, GenerateMockHashFunctions(2));
+            var bloomFilter = new SimpleBloomFilter<string>(5, GenerateMockHashFunctions(2));
 
             var expectedIndex = bloomFilter.ConvertToIndex(hash);
 
@@ -100,7 +100,7 @@ namespace NBloom.Test
         [InlineData(9999)]
         public void Add__AnyValue__BitVectorHasBitsModified(int numHashFunctions)
         {
-            var bloomFilter = new SimpleBloomFilter(999999, GenerateMockHashFunctions(numHashFunctions));
+            var bloomFilter = new SimpleBloomFilter<string>(999999, GenerateMockHashFunctions(numHashFunctions));
 
             bloomFilter.Add("097a6sdf0");
 
@@ -114,7 +114,7 @@ namespace NBloom.Test
         {
             var inputs = new string[] { "cat", "dog", "horse", "pig", "chicken" };
 
-            var bloomFilter = new SimpleBloomFilter(20, GenerateMockHashFunctions(2));
+            var bloomFilter = new SimpleBloomFilter<string>(20, GenerateMockHashFunctions(2));
 
             foreach(var i in inputs)
             {
@@ -127,7 +127,7 @@ namespace NBloom.Test
         [Fact]
         public void Clear__DirtyVector__ResultsInClearedVector()
         {
-            var bloomfilter = new SimpleBloomFilter(20, GenerateMockHashFunctions(20));
+            var bloomfilter = new SimpleBloomFilter<string>(20, GenerateMockHashFunctions(20));
 
             bloomfilter.BitVector[0] = false;
             bloomfilter.BitVector[5] = false;
@@ -145,18 +145,18 @@ namespace NBloom.Test
         [InlineData(100)]
         public void CalculateOptimalBitVectorSize__AnySetSize__ReturnsGreaterThanSetSize(uint setSize)
         {
-            var optimal = SimpleBloomFilter.CalculateOptimalBitVectorSize(setSize, 0.5f);
+            var optimal = SimpleBloomFilter<string>.CalculateOptimalBitVectorSize(setSize, 0.5f);
 
             Assert.True(optimal > setSize);
         }
 
-        private HashFunction[] GenerateMockHashFunctions(int number)
+        private HashFunction<string>[] GenerateMockHashFunctions(int number)
         {
-            var hashFunctions = new HashFunction[number];
+            var hashFunctions = new HashFunction<string>[number];
 
             for(var i = 0; i < number; i++)
             {
-                hashFunctions[i] = new HashFunction(mockHashFunctionDelegate);
+                hashFunctions[i] = new HashFunction<string>(mockHashFunctionDelegate);
             }
 
             return hashFunctions;

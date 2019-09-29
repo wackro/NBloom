@@ -3,13 +3,9 @@ using System.Linq;
 
 namespace NBloom
 {
-    public class SimpleBloomFilter
+    public class SimpleBloomFilter<T>
     {
-        internal bool[] BitVector { get; private set; }
-        
-        internal HashFunction[] HashFunctions { get; }
-
-        internal double? FalsePositiveProbability
+        public double? FalsePositiveProbability
         {
             get
             {
@@ -24,9 +20,13 @@ namespace NBloom
             }
         }
 
+        internal bool[] BitVector { get; private set; }
+        
+        internal HashFunction<T>[] HashFunctions { get; }
+
         private readonly uint? _setSize;
 
-        public SimpleBloomFilter(uint bitVectorSize, params HashFunction[] hashFunctions)
+        public SimpleBloomFilter(uint bitVectorSize, params HashFunction<T>[] hashFunctions)
         {
             if(bitVectorSize == 0)
             {
@@ -52,7 +52,7 @@ namespace NBloom
             HashFunctions = hashFunctions;
         }
 
-        public SimpleBloomFilter(uint setSize, float falsePositiveRate, params HashFunction[] hashFunctions)
+        public SimpleBloomFilter(uint setSize, float falsePositiveRate, params HashFunction<T>[] hashFunctions)
             : this(CalculateOptimalBitVectorSize(setSize, falsePositiveRate), hashFunctions)
         {
             if (setSize == 0)
@@ -68,7 +68,7 @@ namespace NBloom
             _setSize = setSize;
         }
 
-        public SimpleBloomFilter(uint setSize, uint bitVectorSize, params HashFunction[] hashes)
+        public SimpleBloomFilter(uint setSize, uint bitVectorSize, params HashFunction<T>[] hashes)
             : this(bitVectorSize, hashes)
         {
             if (setSize == 0)
@@ -79,7 +79,7 @@ namespace NBloom
             _setSize = setSize;
         }
 
-        public void Add(string input)
+        public void Add(T input)
         {
             var indexes = HashFunctions.Select(x => ConvertToIndex(x.GenerateHash(input)));
 
@@ -89,7 +89,7 @@ namespace NBloom
             }
         }
 
-        public bool Contains(string value)
+        public bool Contains(T value)
         {
             var indexes = HashFunctions.Select(x => ConvertToIndex(x.GenerateHash(value)));
 

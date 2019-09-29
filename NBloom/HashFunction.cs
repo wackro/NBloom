@@ -2,11 +2,11 @@
 
 namespace NBloom
 {
-    public class HashFunction
+    public class HashFunction<TInput>
     {
-        internal Func<string, uint> GenerateHash { get; }
+        internal Func<TInput, uint> GenerateHash { get; }
 
-        public HashFunction(Func<string, uint> generateHash)
+        public HashFunction(Func<TInput, uint> generateHash)
         {
             if(generateHash == null)
             {
