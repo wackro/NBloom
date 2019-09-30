@@ -14,7 +14,7 @@ namespace NBloom
 
                 if (_setSize.HasValue)
                 {
-                    p = Math.Pow(1 - Math.Exp(-(HashFunctions.Length) * _setSize.Value / (double)VectorSize), HashFunctions.Length);
+                    p = Math.Pow(1 - Math.Exp(-(_hashFunctions.Length) * _setSize.Value / (double)VectorSize), _hashFunctions.Length);
                 }
                 
                 return p;
@@ -23,7 +23,7 @@ namespace NBloom
 
         internal abstract uint VectorSize { get; }
 
-        internal HashFunction<T>[] HashFunctions { get; }
+        private HashFunction<T>[] _hashFunctions;
 
         private readonly uint? _setSize;
 
@@ -44,7 +44,7 @@ namespace NBloom
                 throw new ArgumentException("Size of vector must be greater than the amount of hash functions", nameof(hashFunctions));
             }
 
-            HashFunctions = hashFunctions;
+            _hashFunctions = hashFunctions;
         }
 
         public BloomFilter(uint setSize, float falsePositiveRate, params HashFunction<T>[] hashFunctions)
@@ -78,7 +78,7 @@ namespace NBloom
 
         public abstract bool Contains(T input);
 
-        protected IEnumerable<uint> Hash(T input) => HashFunctions.Select(x => ToIndex(x.GenerateHash(input)));
+        protected IEnumerable<uint> Hash(T input) => _hashFunctions.Select(x => ToIndex(x.GenerateHash(input)));
 
         internal static uint CalculateOptimalVectorSize(uint setSize, float falsePositiveRate)
         {
