@@ -6,7 +6,7 @@ namespace NBloom
 {
     public abstract class BloomFilter<T>
     {
-        public double? FalsePositiveProbability
+        public double? FalsePositiveRate
         {
             get
             {
