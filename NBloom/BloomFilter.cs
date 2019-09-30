@@ -23,7 +23,7 @@ namespace NBloom
 
         internal abstract uint VectorSize { get; }
 
-        private HashFunction<T>[] _hashFunctions;
+        private readonly HashFunction<T>[] _hashFunctions;
 
         private readonly uint? _setSize;
 
