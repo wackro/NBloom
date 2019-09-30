@@ -116,10 +116,10 @@ namespace NBloom.Test
         {
             var bloomfilter = new SimpleBloomFilter<string>(20, GenerateMockHashFunctions(20));
 
-            bloomfilter.Vector[0] = false;
-            bloomfilter.Vector[5] = false;
-            bloomfilter.Vector[10] = false;
-            bloomfilter.Vector[15] = false;
+            bloomfilter.Vector[0] = true;
+            bloomfilter.Vector[5] = true;
+            bloomfilter.Vector[10] = true;
+            bloomfilter.Vector[15] = true;
 
             bloomfilter.Clear();
 

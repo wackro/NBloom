@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace NBloom
 {
@@ -46,7 +47,7 @@ namespace NBloom
 
         public void Clear()
         {
-            Enumerable.Range(0, Vector.Length).Select((x, index) => Vector[index] = false);
+            Array.Clear(Vector, 0, Vector.Length);
         }
     }
 }
