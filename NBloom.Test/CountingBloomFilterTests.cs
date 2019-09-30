@@ -49,5 +49,20 @@ namespace NBloom.Test
             Assert.Equal(0u, bloomFilter.Vector[1]);
             Assert.Equal(0u, bloomFilter.Vector[2]);
         }
+
+        [Fact]
+        public void Remove__SomethingThatHasNotBeenAdded__DoesNotThrow()
+        {
+            var mockHashes = new HashFunction<string>[]
+            {
+                new HashFunction<string>(x => 0),
+                new HashFunction<string>(x => 1),
+                new HashFunction<string>(x => 2)
+            };
+
+            var bloomFilter = new CountingBloomFilter<string>(10, mockHashes);
+
+            bloomFilter.Remove("test");
+        }
     }
 }
