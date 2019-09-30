@@ -48,19 +48,6 @@ namespace NBloom.Test
         }
 
         [Fact]
-        public void Initialisation__InitialisedHashFunctionsWithSomeNulls__ThrowsArgumentNullException()
-        {
-            var hashFunctions = new HashFunction<string>[]
-            {
-                new HashFunction<string>(mockHashFunctionDelegate),
-                new HashFunction<string>(mockHashFunctionDelegate),
-                null
-            };
-
-            Assert.Throws<ArgumentException>(() => new SimpleBloomFilter<string>(5, hashFunctions));
-        }
-
-        [Fact]
         public void Initialisation__NumberOfHashFunctionsMoreThanBitVectorSize__ThrowsArgumentException()
         {
             var hashFunctions = GenerateMockHashFunctions(3);

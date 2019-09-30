@@ -39,11 +39,6 @@ namespace NBloom
                 throw new ArgumentNullException(nameof(hashFunctions));
             }
 
-            if (hashFunctions.Any(x => x == null))
-            {
-                throw new ArgumentException("All hash functions must be non-null");
-            }
-
             if (hashFunctions.Length > vectorSize)
             {
                 throw new ArgumentException("Size of vector must be greater than the amount of hash functions", nameof(hashFunctions));

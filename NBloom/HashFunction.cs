@@ -2,7 +2,7 @@
 
 namespace NBloom
 {
-    public class HashFunction<TInput>
+    public struct HashFunction<TInput>
     {
         internal Func<TInput, uint> GenerateHash { get; }
 
