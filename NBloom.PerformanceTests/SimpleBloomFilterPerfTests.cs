@@ -5,17 +5,17 @@ using System.Linq;
 
 namespace NBloom.PerformanceTests
 {
-    class Program
+    class SimpleBloomFilterPerfTests
     {
         static Stopwatch _stopwatch = new Stopwatch();
-        static HashFunction[] hashFunctions = new HashFunction[]
+        static HashFunction<string>[] hashFunctions = new HashFunction<string>[]
             {
-                new HashFunction(x => (uint)x.GetHashCode()),
-                new HashFunction(x => (uint)x.GetHashCode() + 1),
-                new HashFunction(x => (uint)x.GetHashCode() + 2),
+                new HashFunction<string>(x => (uint)x.GetHashCode()),
+                new HashFunction<string>(x => (uint)x.GetHashCode() + 1),
+                new HashFunction<string>(x => (uint)x.GetHashCode() + 2),
             };
 
-        static SimpleBloomFilter b = new SimpleBloomFilter(20000, hashFunctions);
+        static SimpleBloomFilter<string> b = new SimpleBloomFilter<string>(20000, hashFunctions);
 
         static void Output(object o) => Console.WriteLine(o.ToString());
 

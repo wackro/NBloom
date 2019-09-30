@@ -17,7 +17,7 @@ namespace NBloom.Test
         {
             var bloomFilter = new SimpleBloomFilter<string>((uint)bitVectorSize, GenerateMockHashFunctions(bitVectorSize));
 
-            Assert.Equal(bitVectorSize, bloomFilter.BitVector.Length);
+            Assert.Equal(bitVectorSize, bloomFilter.Vector.Length);
         }
 
         [Fact]
@@ -36,7 +36,7 @@ namespace NBloom.Test
 
             var bloomFilter = new SimpleBloomFilter<string>((uint)bitVectorSize, GenerateMockHashFunctions(bitVectorSize));
 
-            Assert.All(bloomFilter.BitVector, x => Assert.Equal(expectedInitialValue, x));
+            Assert.All(bloomFilter.Vector, x => Assert.Equal(expectedInitialValue, x));
         }
 
         [Fact]
@@ -76,9 +76,9 @@ namespace NBloom.Test
         {
             var bloomFilter = new SimpleBloomFilter<string>(bitVectorSize, GenerateMockHashFunctions(1));
 
-            var index = bloomFilter.ConvertToIndex(hash);
+            var index = bloomFilter.ToIndex(hash);
 
-            Assert.InRange(index, 0u, (uint) bloomFilter.BitVector.Length - 1);
+            Assert.InRange(index, 0u, (uint) bloomFilter.Vector.Length - 1);
         }
 
         [Theory]
@@ -88,9 +88,9 @@ namespace NBloom.Test
         {
             var bloomFilter = new SimpleBloomFilter<string>(5, GenerateMockHashFunctions(2));
 
-            var expectedIndex = bloomFilter.ConvertToIndex(hash);
+            var expectedIndex = bloomFilter.ToIndex(hash);
 
-            var indexes = Enumerable.Range(0, 10).Select(x => bloomFilter.ConvertToIndex(hash));
+            var indexes = Enumerable.Range(0, 10).Select(x => bloomFilter.ToIndex(hash));
 
             Assert.All(indexes, x => Assert.Equal(expectedIndex, x));
         }
@@ -104,7 +104,7 @@ namespace NBloom.Test
 
             bloomFilter.Add("097a6sdf0");
 
-            var bitVectorModified = bloomFilter.BitVector.Any(x => x == true);
+            var bitVectorModified = bloomFilter.Vector.Any(x => x == true);
 
             Assert.True(bitVectorModified);
         }
@@ -129,14 +129,14 @@ namespace NBloom.Test
         {
             var bloomfilter = new SimpleBloomFilter<string>(20, GenerateMockHashFunctions(20));
 
-            bloomfilter.BitVector[0] = false;
-            bloomfilter.BitVector[5] = false;
-            bloomfilter.BitVector[10] = false;
-            bloomfilter.BitVector[15] = false;
+            bloomfilter.Vector[0] = false;
+            bloomfilter.Vector[5] = false;
+            bloomfilter.Vector[10] = false;
+            bloomfilter.Vector[15] = false;
 
             bloomfilter.Clear();
 
-            Assert.All(bloomfilter.BitVector, x => Assert.False(x));
+            Assert.All(bloomfilter.Vector, x => Assert.False(x));
         }
 
         [Theory]
@@ -145,7 +145,7 @@ namespace NBloom.Test
         [InlineData(100)]
         public void CalculateOptimalBitVectorSize__AnySetSize__ReturnsGreaterThanSetSize(uint setSize)
         {
-            var optimal = SimpleBloomFilter<string>.CalculateOptimalBitVectorSize(setSize, 0.5f);
+            var optimal = SimpleBloomFilter<string>.CalculateOptimalVectorSize(setSize, 0.5f);
 
             Assert.True(optimal > setSize);
         }
