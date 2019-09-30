@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace NBloom
 {
@@ -75,6 +76,11 @@ namespace NBloom
         }
 
         public abstract void Add(T input);
+
+        public void Add(IEnumerable<T> inputs)
+        {
+            Parallel.ForEach(inputs, (i) => Add(i));
+        }
 
         public abstract bool Contains(T input);
 

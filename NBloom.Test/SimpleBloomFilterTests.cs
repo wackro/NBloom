@@ -65,7 +65,7 @@ namespace NBloom.Test
 
             var index = bloomFilter.ToIndex(hash);
 
-            Assert.InRange(index, 0u, (uint) bloomFilter.Vector.Length - 1);
+            Assert.InRange(index, 0u, (uint)bloomFilter.Vector.Length - 1);
         }
 
         [Theory]
@@ -90,6 +90,19 @@ namespace NBloom.Test
             var bloomFilter = new SimpleBloomFilter<string>(999999, GenerateMockHashFunctions(numHashFunctions));
 
             bloomFilter.Add("097a6sdf0");
+
+            var bitVectorModified = bloomFilter.Vector.Any(x => x == true);
+
+            Assert.True(bitVectorModified);
+        }
+
+        [Fact(Skip = "Need to work out how to count how many times the internal Add() was called")]
+        public void Add__Enumerable__AddsAllElementsInEnumerable()
+        {
+            var bloomFilter = new SimpleBloomFilter<string>(999999, GenerateMockHashFunctions(3));
+            var inputs = new string[] { "test1", "test", "test3" };
+
+            bloomFilter.Add(inputs);
 
             var bitVectorModified = bloomFilter.Vector.Any(x => x == true);
 

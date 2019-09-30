@@ -2,27 +2,38 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace NBloom.PerformanceTests
 {
     class SimpleBloomFilterPerfTests
     {
         static Stopwatch _stopwatch = new Stopwatch();
-        static HashFunction<string>[] hashFunctions = new HashFunction<string>[]
+        static HashFunction<int>[] hashFunctions = new HashFunction<int>[]
             {
-                new HashFunction<string>(x => (uint)x.GetHashCode()),
-                new HashFunction<string>(x => (uint)x.GetHashCode() + 1),
-                new HashFunction<string>(x => (uint)x.GetHashCode() + 2),
+                new HashFunction<int>(x => (uint)x.GetHashCode()),
+                new HashFunction<int>(x => (uint)x.GetHashCode() + 1),
+                new HashFunction<int>(x => (uint)x.GetHashCode() + 2),
             };
 
-        static SimpleBloomFilter<string> b = new SimpleBloomFilter<string>(20000, hashFunctions);
+        static SimpleBloomFilter<int> b = new SimpleBloomFilter<int>(2000000000, hashFunctions);
 
         static void Output(object o) => Console.WriteLine(o.ToString());
 
+        static int[] testInputs = new int[100000];
+
         static void Main(string[] args)
         {
-            //Output(MeasureTime(() => b.Add("hello"), 100000, 100));
-            Output(MeasureTime(() => b.Clear(), 1000, 10));
+            foreach(var i in Enumerable.Range(0, 100000))
+            {
+                testInputs[i] = i;
+            }
+
+            // 1025
+            Output(MeasureTime(() =>
+            {
+                b.Add(testInputs);
+            }, 100, 5));
 
             Console.ReadLine();
         }
