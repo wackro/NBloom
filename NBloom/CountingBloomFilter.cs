@@ -34,7 +34,10 @@ namespace NBloom
 
             foreach(var i in indices)
             {
-                Vector[i]++;
+                if (Vector[i] != ushort.MaxValue)
+                {
+                    Vector[i]++;
+                }
             }
         }
 
