@@ -55,9 +55,9 @@ namespace NBloom
                 throw new ArgumentException(nameof(setSize));
             }
 
-            if (falsePositiveRate == 0)
+            if (falsePositiveRate < 0 || falsePositiveRate > 1)
             {
-                throw new ArgumentOutOfRangeException(nameof(falsePositiveRate));
+                throw new ArgumentOutOfRangeException(nameof(falsePositiveRate), "Must be between 0 and 1");
             }
 
             _setSize = setSize;
