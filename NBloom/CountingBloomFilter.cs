@@ -57,5 +57,10 @@ namespace NBloom
                 }
             }
         }
+
+        public override void Clear()
+        {
+            Array.Clear(Vector, 0, Vector.Length);
+        }
     }
 }
