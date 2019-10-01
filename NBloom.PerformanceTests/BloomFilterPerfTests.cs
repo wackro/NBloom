@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace NBloom.PerformanceTests
 {
-    class SimpleBloomFilterPerfTests
+    class BloomFilterPerfTests
     {
         static Stopwatch _stopwatch = new Stopwatch();
         static HashFunction<int>[] hashFunctions = new HashFunction<int>[]

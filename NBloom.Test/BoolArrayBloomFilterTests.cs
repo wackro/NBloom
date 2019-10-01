@@ -4,7 +4,7 @@ using Xunit;
 
 namespace NBloom.Test
 {
-    public class SimpleBloomFilterTests
+    public class BoolArrayBloomFilterTests
     {
         private static uint c = 0;
         private readonly Func<string, uint> mockHashFunctionDelegate = x => c++;
