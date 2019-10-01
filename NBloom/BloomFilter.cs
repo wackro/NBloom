@@ -11,18 +11,18 @@ namespace NBloom
         {
             get
             {
-                var p = (double?)null;
-
                 if (_setSize.HasValue)
                 {
-                    p = Math.Pow(1 - Math.Exp(-(_hashFunctions.Length) * _setSize.Value / (double)VectorSize), _hashFunctions.Length);
+                    _falsePositiveRate = Math.Pow(1 - Math.Exp(-(_hashFunctions.Length) * _setSize.Value / (double)VectorSize), _hashFunctions.Length);
                 }
                 
-                return p;
+                return _falsePositiveRate;
             }
         }
 
         protected abstract uint VectorSize { get; }
+
+        private double? _falsePositiveRate;
 
         private readonly HashFunction<T>[] _hashFunctions;
 
