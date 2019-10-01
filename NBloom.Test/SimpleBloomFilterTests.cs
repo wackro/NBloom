@@ -15,7 +15,7 @@ namespace NBloom.Test
         [InlineData(999999)]
         public void Initialisation__BitVecorSizeGreaterThanOne__InitialisesBitVectorToThatValue(int bitVectorSize)
         {
-            var bloomFilter = new SimpleBloomFilter<string>((uint)bitVectorSize, GenerateMockHashFunctions(bitVectorSize));
+            var bloomFilter = new BoolArrayBloomFilter<string>((uint)bitVectorSize, GenerateMockHashFunctions(bitVectorSize));
 
             Assert.Equal(bitVectorSize, bloomFilter.Vector.Length);
         }
@@ -23,7 +23,7 @@ namespace NBloom.Test
         [Fact]
         public void Initialisation__BitVecorSizeOfOne__ThrowsArgumentException()
         {
-            Assert.Throws<ArgumentException>(() => new SimpleBloomFilter<string>(0));
+            Assert.Throws<ArgumentException>(() => new BoolArrayBloomFilter<string>(0));
         }
 
         [Theory]
@@ -34,7 +34,7 @@ namespace NBloom.Test
         {
             var expectedInitialValue = false;
 
-            var bloomFilter = new SimpleBloomFilter<string>((uint)bitVectorSize, GenerateMockHashFunctions(bitVectorSize));
+            var bloomFilter = new BoolArrayBloomFilter<string>((uint)bitVectorSize, GenerateMockHashFunctions(bitVectorSize));
 
             Assert.All(bloomFilter.Vector, x => Assert.Equal(expectedInitialValue, x));
         }
@@ -44,7 +44,7 @@ namespace NBloom.Test
         {
             var hashFunctions = (HashFunction<string>[])null;
 
-            Assert.Throws<ArgumentNullException>(() => new SimpleBloomFilter<string>(5, hashFunctions));
+            Assert.Throws<ArgumentNullException>(() => new BoolArrayBloomFilter<string>(5, hashFunctions));
         }
 
         [Fact]
@@ -52,7 +52,7 @@ namespace NBloom.Test
         {
             var hashFunctions = GenerateMockHashFunctions(3);
 
-            Assert.Throws<ArgumentException>(() => new SimpleBloomFilter<string>(2, hashFunctions));
+            Assert.Throws<ArgumentException>(() => new BoolArrayBloomFilter<string>(2, hashFunctions));
         }
 
         [Theory]
@@ -61,7 +61,7 @@ namespace NBloom.Test
         [InlineData(776911693u, 9999)]
         public void ConvertToIndex__AnyValue__MapsToIntegerWithinRangeOfBitVector(uint hash, uint bitVectorSize)
         {
-            var bloomFilter = new SimpleBloomFilter<string>(bitVectorSize, GenerateMockHashFunctions(1));
+            var bloomFilter = new BoolArrayBloomFilter<string>(bitVectorSize, GenerateMockHashFunctions(1));
 
             var index = bloomFilter.ToIndex(hash);
 
@@ -73,7 +73,7 @@ namespace NBloom.Test
         [InlineData(71234616)]
         public void ConvertToIndex__IdenticalInputs__ReturnTheSameValue(uint hash)
         {
-            var bloomFilter = new SimpleBloomFilter<string>(5, GenerateMockHashFunctions(2));
+            var bloomFilter = new BoolArrayBloomFilter<string>(5, GenerateMockHashFunctions(2));
 
             var expectedIndex = bloomFilter.ToIndex(hash);
 
@@ -87,7 +87,7 @@ namespace NBloom.Test
         [InlineData(9999)]
         public void Add__AnyValue__BitVectorHasBitsModified(int numHashFunctions)
         {
-            var bloomFilter = new SimpleBloomFilter<string>(999999, GenerateMockHashFunctions(numHashFunctions));
+            var bloomFilter = new BoolArrayBloomFilter<string>(999999, GenerateMockHashFunctions(numHashFunctions));
 
             bloomFilter.Add("097a6sdf0");
 
@@ -99,7 +99,7 @@ namespace NBloom.Test
         [Fact(Skip = "Need to work out how to count how many times the internal Add() was called")]
         public void Add__Enumerable__AddsAllElementsInEnumerable()
         {
-            var bloomFilter = new SimpleBloomFilter<string>(999999, GenerateMockHashFunctions(3));
+            var bloomFilter = new BoolArrayBloomFilter<string>(999999, GenerateMockHashFunctions(3));
             var inputs = new string[] { "test1", "test", "test3" };
 
             bloomFilter.Add(inputs);
@@ -114,7 +114,7 @@ namespace NBloom.Test
         {
             var inputs = new string[] { "cat", "dog", "horse", "pig", "chicken" };
 
-            var bloomFilter = new SimpleBloomFilter<string>(20, GenerateMockHashFunctions(2));
+            var bloomFilter = new BoolArrayBloomFilter<string>(20, GenerateMockHashFunctions(2));
 
             foreach(var i in inputs)
             {
@@ -127,7 +127,7 @@ namespace NBloom.Test
         [Fact]
         public void Clear__DirtyVector__ResultsInClearedVector()
         {
-            var bloomfilter = new SimpleBloomFilter<string>(20, GenerateMockHashFunctions(20));
+            var bloomfilter = new BoolArrayBloomFilter<string>(20, GenerateMockHashFunctions(20));
 
             bloomfilter.Vector[0] = true;
             bloomfilter.Vector[5] = true;
@@ -145,7 +145,7 @@ namespace NBloom.Test
         [InlineData(100)]
         public void CalculateOptimalBitVectorSize__AnySetSize__ReturnsGreaterThanSetSize(uint setSize)
         {
-            var optimal = SimpleBloomFilter<string>.CalculateOptimalVectorSize(setSize, 0.5f);
+            var optimal = BoolArrayBloomFilter<string>.CalculateOptimalVectorSize(setSize, 0.5f);
 
             Assert.True(optimal > setSize);
         }

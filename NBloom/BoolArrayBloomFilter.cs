@@ -1,28 +1,29 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace NBloom
 {
-    public class SimpleBloomFilter<T> : BloomFilter<T>
+    public class BoolArrayBloomFilter<T> : BloomFilter<T>
     {
-        internal override uint VectorSize => (uint)Vector.Length;
+        protected override uint VectorSize => (uint)Vector.Length;
 
         internal readonly bool[] Vector;
 
-        public SimpleBloomFilter(uint vectorSize, params HashFunction<T>[] hashFunctions)
+        public BoolArrayBloomFilter(uint vectorSize, params HashFunction<T>[] hashFunctions)
             : base(vectorSize, hashFunctions)
         {
             Vector = new bool[vectorSize];
         }
 
-        public SimpleBloomFilter(uint setSize, float falsePositiveRate, params HashFunction<T>[] hashFunctions)
+        public BoolArrayBloomFilter(uint setSize, float falsePositiveRate, params HashFunction<T>[] hashFunctions)
             : base(setSize, falsePositiveRate, hashFunctions)
         {
             Vector = new bool[CalculateOptimalVectorSize(setSize, falsePositiveRate)];
         }
 
-        public SimpleBloomFilter(uint setSize, uint vectorSize, params HashFunction<T>[] hashes)
+        public BoolArrayBloomFilter(uint setSize, uint vectorSize, params HashFunction<T>[] hashes)
             : base(setSize, vectorSize, hashes)
         {
             Vector = new bool[vectorSize];
@@ -48,6 +49,14 @@ namespace NBloom
         public void Clear()
         {
             Array.Clear(Vector, 0, Vector.Length);
+        }
+
+        public static IEnumerable<IEnumerable<bool>> Split(bool[] array, int size)
+        {
+            for (var i = 0; i < (float)array.Length / size; i++)
+            {
+                yield return array.Skip(i * size).Take(size);
+            }
         }
     }
 }
