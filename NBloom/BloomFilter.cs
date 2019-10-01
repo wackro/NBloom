@@ -75,14 +75,20 @@ namespace NBloom
             _setSize = setSize;
         }
 
-        public abstract void Add(T input);
+        public void Add(T input) => Add(Hash(input));
 
         public void Add(IEnumerable<T> inputs)
         {
             Parallel.ForEach(inputs, (i) => Add(i));
         }
 
-        public abstract bool Contains(T input);
+        public bool Contains(T input) => Contains(Hash(input));
+
+        public abstract void Clear();
+
+        protected abstract void Add(IEnumerable<uint> indices);
+
+        protected abstract bool Contains(IEnumerable<uint> indices);
 
         protected IEnumerable<uint> Hash(T input) => _hashFunctions.Select(x => ToIndex(x.GenerateHash(input)));
 

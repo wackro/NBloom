@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
@@ -28,10 +29,8 @@ namespace NBloom
             Vector = new ushort[vectorSize];
         }
 
-        public override void Add(T input)
+        protected override void Add(IEnumerable<uint> indices)
         {
-            var indices = Hash(input);
-
             foreach(var i in indices)
             {
                 if (Vector[i] != ushort.MaxValue)
@@ -41,16 +40,14 @@ namespace NBloom
             }
         }
 
-        public override bool Contains(T value)
+        protected override bool Contains(IEnumerable<uint> indices)
         {
-            var indices = Hash(value);
-
             return indices.All(i => Vector[i] > 0);
         }
 
-        public void Remove(T value)
+        public void Remove(T input)
         {
-            var indices = Hash(value);
+            var indices = Hash(input);
 
             foreach(var i in indices)
             {
