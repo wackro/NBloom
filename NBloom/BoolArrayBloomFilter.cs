@@ -50,13 +50,5 @@ namespace NBloom
         {
             Array.Clear(Vector, 0, Vector.Length);
         }
-
-        public static IEnumerable<IEnumerable<bool>> Split(bool[] array, int size)
-        {
-            for (var i = 0; i < (float)array.Length / size; i++)
-            {
-                yield return array.Skip(i * size).Take(size);
-            }
-        }
     }
 }
