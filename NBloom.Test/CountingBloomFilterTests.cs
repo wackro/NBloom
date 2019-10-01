@@ -87,5 +87,28 @@ namespace NBloom.Test
 
             bloomFilter.Remove("test");
         }
+
+        [Fact]
+        public void Add__RemoveWhenIndicesAreZero__DoesNotUnderflow()
+        {
+            var mockHashes = new HashFunction<string>[]
+            {
+                new HashFunction<string>(x => 0),
+                new HashFunction<string>(x => 1),
+                new HashFunction<string>(x => 2)
+            };
+
+            var bloomFilter = new CountingBloomFilter<string>(3, mockHashes);
+
+            Assert.Equal(0, bloomFilter.Vector[0]);
+            Assert.Equal(0, bloomFilter.Vector[1]);
+            Assert.Equal(0, bloomFilter.Vector[2]);
+
+            bloomFilter.Remove("test");
+
+            Assert.Equal(0, bloomFilter.Vector[0]);
+            Assert.Equal(0, bloomFilter.Vector[1]);
+            Assert.Equal(0, bloomFilter.Vector[2]);
+        }
     }
 }
