@@ -22,7 +22,7 @@ namespace NBloom
             }
         }
 
-        internal abstract uint VectorSize { get; }
+        protected abstract uint VectorSize { get; }
 
         private readonly HashFunction<T>[] _hashFunctions;
 
