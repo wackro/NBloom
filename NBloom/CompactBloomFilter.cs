@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -30,20 +29,24 @@ namespace NBloom
             Vector = new BitArray((int)vectorSize);
         }
 
-        protected override void Add(IEnumerable<uint> indices)
+        public override void Add(T input)
         {
+            var indices = Hash(input);
+
             foreach (var index in indices)
             {
                 Vector[(int)index] = true;
             }
         }
 
-        protected override bool Contains(IEnumerable<uint> indices)
+        public override bool Contains(T value)
         {
+            var indices = Hash(value);
+
             return indices.All(i => Vector[(int)i]);
         }
 
-        public override void Clear()
+        public void Clear()
         {
             Vector.SetAll(false);
         }

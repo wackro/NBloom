@@ -29,20 +29,24 @@ namespace NBloom
             Vector = new bool[vectorSize];
         }
 
-        protected override void Add(IEnumerable<uint> indices)
+        public override void Add(T input)
         {
+            var indices = Hash(input);
+
             foreach (var index in indices)
             {
                 Vector[index] = true;
             }
         }
 
-        protected override bool Contains(IEnumerable<uint> indices)
+        public override bool Contains(T value)
         {
+            var indices = Hash(value);
+
             return indices.All(i => Vector[i]);
         }
 
-        public override void Clear()
+        public void Clear()
         {
             Array.Clear(Vector, 0, Vector.Length);
         }
