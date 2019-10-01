@@ -6,7 +6,7 @@ namespace NBloom
 {
     public class CountingBloomFilter<T> : BloomFilter<T>
     {
-        internal override uint VectorSize => (uint)Vector.Length;
+        protected override uint VectorSize => (uint)Vector.Length;
 
         internal ushort[] Vector { get; }
 
