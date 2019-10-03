@@ -8,24 +8,24 @@ namespace NBloom
     {
         protected override uint VectorSize => (uint)Vector.Length;
 
-        internal ushort[] Vector { get; }
+        internal byte[] Vector { get; }
 
         public CountingBloomFilter(uint vectorSize, params HashFunction<T>[] hashFunctions)
             : base(vectorSize, hashFunctions)
         {
-            Vector = new ushort[vectorSize];
+            Vector = new byte[vectorSize];
         }
 
         public CountingBloomFilter(uint setSize, float falsePositiveRate, params HashFunction<T>[] hashFunctions)
             : base(setSize, falsePositiveRate, hashFunctions)
         {
-            Vector = new ushort[CalculateOptimalVectorSize(setSize, falsePositiveRate)];
+            Vector = new byte[CalculateOptimalVectorSize(setSize, falsePositiveRate)];
         }
 
         public CountingBloomFilter(uint setSize, uint vectorSize, params HashFunction<T>[] hashes)
             : base(setSize, vectorSize, hashes)
         {
-            Vector = new ushort[vectorSize];
+            Vector = new byte[vectorSize];
         }
 
         public override void Add(T input)
@@ -34,7 +34,7 @@ namespace NBloom
 
             foreach(var i in indices)
             {
-                if (Vector[i] != ushort.MaxValue)
+                if (Vector[i] != byte.MaxValue)
                 {
                     Vector[i]++;
                 }
