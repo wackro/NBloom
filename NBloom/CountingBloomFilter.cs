@@ -1,32 +1,17 @@
 ﻿using System;
 using System.Linq;
 using System.Text;
-using NBloom.Hashing;
 
 namespace NBloom
 {
     public class CountingBloomFilter<T> : BloomFilter<T>
     {
-        protected override uint VectorSize => (uint)Vector.Length;
-
         internal byte[] Vector { get; }
 
-        public CountingBloomFilter(uint vectorSize, params IHashFunction<T>[] hashFunctions)
-            : base(vectorSize, hashFunctions)
+        public CountingBloomFilter(uint setSize, float falsePositiveRate, Func<T, byte[]> getBytesDelegate)
+            : base(setSize, falsePositiveRate, getBytesDelegate)
         {
-            Vector = new byte[vectorSize];
-        }
-
-        public CountingBloomFilter(uint setSize, float falsePositiveRate, params IHashFunction<T>[] hashFunctions)
-            : base(setSize, falsePositiveRate, hashFunctions)
-        {
-            Vector = new byte[CalculateOptimalVectorSize(setSize, falsePositiveRate)];
-        }
-
-        public CountingBloomFilter(uint setSize, uint vectorSize, params IHashFunction<T>[] hashFunctions)
-            : base(setSize, vectorSize, hashFunctions)
-        {
-            Vector = new byte[vectorSize];
+            Vector = new byte[VectorSize];
         }
 
         public override void Add(T input)

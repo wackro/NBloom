@@ -146,7 +146,7 @@ namespace NBloom.Test
         [InlineData(100)]
         public void CalculateOptimalBitVectorSize__AnySetSize__ReturnsGreaterThanSetSize(uint setSize)
         {
-            var optimal = BoolArrayBloomFilter<string>.CalculateOptimalVectorSize(setSize, 0.5f);
+            var optimal = new BoolArrayBloomFilter<string>(20, GenerateMockHashFunctions(20)).OptimalVectorSize();
 
             Assert.True(optimal > setSize);
         }

@@ -8,7 +8,7 @@ namespace NBloom.Hashing
 
         public HashFunction(Func<TInput, uint> generateHashDelegate)
         {
-            if(generateHashDelegate == null)
+            if (generateHashDelegate == null)
             {
                 throw new ArgumentNullException(nameof(generateHashDelegate));
             }

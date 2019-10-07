@@ -1,33 +1,17 @@
 ﻿using System;
 using System.Collections;
 using System.Linq;
-using System.Threading.Tasks;
-using NBloom.Hashing;
 
 namespace NBloom
 {
     public class CompactBloomFilter<T> : BloomFilter<T>
     {
-        protected override uint VectorSize => (uint)Vector.Length;
-
         internal readonly BitArray Vector;
 
-        public CompactBloomFilter(uint vectorSize, params IHashFunction<T>[] hashFunctions)
-            : base(vectorSize, hashFunctions)
+        public CompactBloomFilter(uint setSize, float falsePositiveRate, Func<T, byte[]> getBytesDelegate)
+            : base(setSize, falsePositiveRate, getBytesDelegate)
         {
-            Vector = new BitArray((int)vectorSize);
-        }
-
-        public CompactBloomFilter(uint setSize, float falsePositiveRate, params IHashFunction<T>[] hashFunctions)
-            : base(setSize, falsePositiveRate, hashFunctions)
-        {
-            Vector = new BitArray((int)CalculateOptimalVectorSize(setSize, falsePositiveRate));
-        }
-
-        public CompactBloomFilter(uint setSize, uint vectorSize, params IHashFunction<T>[] hashFunctions)
-            : base(setSize, vectorSize, hashFunctions)
-        {
-            Vector = new BitArray((int)vectorSize);
+            Vector = new BitArray((int)VectorSize);
         }
 
         public override void Add(T input)

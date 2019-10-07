@@ -8,53 +8,22 @@ namespace NBloom
 {
     public abstract class BloomFilter<T>
     {
-        public double? FalsePositiveRate
-        {
-            get
-            {
-                if (_setSize.HasValue)
-                {
-                    _falsePositiveRate = Math.Pow(1 - Math.Exp(-(_hashFunctions.Length) * _setSize.Value / (double)VectorSize), _hashFunctions.Length);
-                }
-                
-                return _falsePositiveRate;
-            }
-        }
+        public float ActualFalsePositiveRate => (float)Math.Pow(1 - Math.Exp(-(_hashFunctions.Length) * _setSize / VectorSize), _hashFunctions.Length);
 
-        protected abstract uint VectorSize { get; }
+        protected uint VectorSize { get; private set; }
 
-        private double? _falsePositiveRate;
+        protected int HashCount => _hashFunctions.Length;
 
-        private readonly IHashFunction<T>[] _hashFunctions;
+        private readonly float _falsePositiveRate;
+        private readonly uint _setSize;
+        private IHashFunction<T>[] _hashFunctions;
+        private readonly Func<T, byte[]> _getBytesDelegate;
 
-        private readonly uint? _setSize;
-
-        internal BloomFilter(uint vectorSize, params IHashFunction<T>[] hashFunctions)
-        {
-            if (vectorSize == 0)
-            {
-                throw new ArgumentException("Must be greater than 0", nameof(vectorSize));
-            }
-
-            if (hashFunctions == null)
-            {
-                throw new ArgumentNullException(nameof(hashFunctions));
-            }
-
-            if (hashFunctions.Length > vectorSize)
-            {
-                throw new ArgumentException("Size of vector must be greater than the amount of hash functions", nameof(hashFunctions));
-            }
-
-            _hashFunctions = hashFunctions;
-        }
-
-        internal BloomFilter(uint setSize, float falsePositiveRate, params IHashFunction<T>[] hashFunctions)
-            : this(CalculateOptimalVectorSize(setSize, falsePositiveRate), hashFunctions)
+        protected BloomFilter(uint setSize, float falsePositiveRate, Func<T, byte[]> getBytesDelegate = null)
         {
             if (setSize == 0)
             {
-                throw new ArgumentException(nameof(setSize));
+                throw new ArgumentException(nameof(setSize), "Must be greater than 0");
             }
 
             if (falsePositiveRate < 0 || falsePositiveRate > 1)
@@ -63,17 +32,11 @@ namespace NBloom
             }
 
             _setSize = setSize;
-        }
+            _falsePositiveRate = falsePositiveRate;
+            _getBytesDelegate = getBytesDelegate;
 
-        internal BloomFilter(uint setSize, uint vectorSize, params IHashFunction<T>[] hashFunctions)
-            : this(vectorSize, hashFunctions)
-        {
-            if (setSize == 0)
-            {
-                throw new ArgumentException(nameof(setSize));
-            }
-
-            _setSize = setSize;
+            VectorSize = OptimalVectorSize();
+            InitHashFunctions();
         }
 
         public abstract void Add(T input);
@@ -87,13 +50,21 @@ namespace NBloom
 
         protected IEnumerable<uint> Hash(T input) => _hashFunctions.Select(x => ToIndex(x.GenerateHash(input)));
 
-        internal static uint CalculateOptimalVectorSize(uint setSize, float falsePositiveRate)
-        {
-            var vectorSize = (uint)Math.Ceiling(setSize * Math.Log(falsePositiveRate) / Math.Log(1 / Math.Pow(2, Math.Log(2))));
-
-            return vectorSize;
-        }
-
         internal uint ToIndex(uint hash) => hash % VectorSize;
+
+        internal uint OptimalVectorSize() => (uint)Math.Ceiling(_setSize * Math.Log(_falsePositiveRate) / Math.Log(1 / Math.Pow(2, Math.Log(2))));
+
+        private uint OptimalHashCount() => OptimalVectorSize() / _setSize * (uint)Math.Log(2);
+
+        private void InitHashFunctions()
+        {
+            var hashCount = OptimalHashCount();
+            _hashFunctions = new IHashFunction<T>[hashCount];
+
+            for (var i = 0; i < hashCount; i++)
+            {
+                _hashFunctions[i] = new MurmurHash<T>(_getBytesDelegate);
+            }
+        }
     }
 }

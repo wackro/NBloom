@@ -1,33 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using NBloom.Hashing;
 
 namespace NBloom
 {
     public class BoolArrayBloomFilter<T> : BloomFilter<T>
     {
-        protected override uint VectorSize => (uint)Vector.Length;
-
         internal readonly bool[] Vector;
 
-        public BoolArrayBloomFilter(uint vectorSize, params IHashFunction<T>[] hashFunctions)
-            : base(vectorSize, hashFunctions)
+        public BoolArrayBloomFilter(uint setSize, float falsePositiveRate, Func<T, byte[]> getBytesDelegate)
+            : base(setSize, falsePositiveRate, getBytesDelegate)
         {
-            Vector = new bool[vectorSize];
-        }
-
-        public BoolArrayBloomFilter(uint setSize, float falsePositiveRate, params IHashFunction<T>[] hashFunctions)
-            : base(setSize, falsePositiveRate, hashFunctions)
-        {
-            Vector = new bool[CalculateOptimalVectorSize(setSize, falsePositiveRate)];
-        }
-
-        public BoolArrayBloomFilter(uint setSize, uint vectorSize, params IHashFunction<T>[] hashFunctions)
-            : base(setSize, vectorSize, hashFunctions)
-        {
-            Vector = new bool[vectorSize];
+            Vector = new bool[VectorSize];
         }
 
         public override void Add(T input)
