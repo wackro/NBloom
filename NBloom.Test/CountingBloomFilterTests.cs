@@ -40,9 +40,9 @@ namespace NBloom.Test
 
             var bloomFilter = new CountingBloomFilter<string>(3, mockHashes);
 
-            bloomFilter.Vector[0] = ushort.MaxValue;
-            bloomFilter.Vector[1] = ushort.MaxValue;
-            bloomFilter.Vector[2] = ushort.MaxValue;
+            bloomFilter.Vector[0] = byte.MaxValue;
+            bloomFilter.Vector[1] = byte.MaxValue;
+            bloomFilter.Vector[2] = byte.MaxValue;
 
             bloomFilter.Add("test");
 
