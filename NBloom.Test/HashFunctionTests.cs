@@ -24,7 +24,7 @@ namespace NBloom.Test
             var hashFunction = new HashFunction<string>(func);
 
             var resultFromFunc = func("test");
-            var resultFromHashFunctionObject = hashFunction.GenerateHash("test");
+            var resultFromHashFunctionObject = hashFunction.GenerateHashDelegate("test");
 
             Assert.Equal(resultFromFunc, resultFromHashFunctionObject);
         }
