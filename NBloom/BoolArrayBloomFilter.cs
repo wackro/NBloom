@@ -12,19 +12,19 @@ namespace NBloom
 
         internal readonly bool[] Vector;
 
-        public BoolArrayBloomFilter(uint vectorSize, params HashFunction<T>[] hashFunctions)
+        public BoolArrayBloomFilter(uint vectorSize, params IHashFunction<T>[] hashFunctions)
             : base(vectorSize, hashFunctions)
         {
             Vector = new bool[vectorSize];
         }
 
-        public BoolArrayBloomFilter(uint setSize, float falsePositiveRate, params HashFunction<T>[] hashFunctions)
+        public BoolArrayBloomFilter(uint setSize, float falsePositiveRate, params IHashFunction<T>[] hashFunctions)
             : base(setSize, falsePositiveRate, hashFunctions)
         {
             Vector = new bool[CalculateOptimalVectorSize(setSize, falsePositiveRate)];
         }
 
-        public BoolArrayBloomFilter(uint setSize, uint vectorSize, params HashFunction<T>[] hashFunctions)
+        public BoolArrayBloomFilter(uint setSize, uint vectorSize, params IHashFunction<T>[] hashFunctions)
             : base(setSize, vectorSize, hashFunctions)
         {
             Vector = new bool[vectorSize];

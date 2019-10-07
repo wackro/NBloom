@@ -11,19 +11,19 @@ namespace NBloom
 
         internal byte[] Vector { get; }
 
-        public CountingBloomFilter(uint vectorSize, params HashFunction<T>[] hashFunctions)
+        public CountingBloomFilter(uint vectorSize, params IHashFunction<T>[] hashFunctions)
             : base(vectorSize, hashFunctions)
         {
             Vector = new byte[vectorSize];
         }
 
-        public CountingBloomFilter(uint setSize, float falsePositiveRate, params HashFunction<T>[] hashFunctions)
+        public CountingBloomFilter(uint setSize, float falsePositiveRate, params IHashFunction<T>[] hashFunctions)
             : base(setSize, falsePositiveRate, hashFunctions)
         {
             Vector = new byte[CalculateOptimalVectorSize(setSize, falsePositiveRate)];
         }
 
-        public CountingBloomFilter(uint setSize, uint vectorSize, params HashFunction<T>[] hashFunctions)
+        public CountingBloomFilter(uint setSize, uint vectorSize, params IHashFunction<T>[] hashFunctions)
             : base(setSize, vectorSize, hashFunctions)
         {
             Vector = new byte[vectorSize];

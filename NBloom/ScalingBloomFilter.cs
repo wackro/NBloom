@@ -14,7 +14,7 @@
 //        private const byte GROWTH_RATIO = 2;
 //        private const float TIGHTENING_RATIO = 0.8f;
 
-//        public ScalingBloomFilter(uint vectorSize, params HashFunction<T>[] hashFunctions)
+//        public ScalingBloomFilter(uint vectorSize, params IHashFunction<T>[] hashFunctions)
 //            : base(vectorSize, hashFunctions)
 //        {
 //            _vector = new bool[hashFunctions.Length][];
@@ -22,7 +22,7 @@
 //            InitSlices(vectorSize, hashFunctions);
 //        }
 
-//        public ScalingBloomFilter(uint setSize, float falsePositiveRate, params HashFunction<T>[] hashFunctions)
+//        public ScalingBloomFilter(uint setSize, float falsePositiveRate, params IHashFunction<T>[] hashFunctions)
 //            : base(setSize, falsePositiveRate, hashFunctions)
 //        {
 //            _vector = new bool[hashFunctions.Length][];
@@ -30,7 +30,7 @@
 //            InitSlices(CalculateOptimalVectorSize(setSize, falsePositiveRate), hashFunctions);
 //        }
 
-//        public ScalingBloomFilter(uint setSize, uint vectorSize, params HashFunction<T>[] hashFunctions)
+//        public ScalingBloomFilter(uint setSize, uint vectorSize, params IHashFunction<T>[] hashFunctions)
 //            : base(setSize, vectorSize, hashFunctions)
 //        {
 //            _vector = new bool[hashFunctions.Length][];
@@ -61,7 +61,7 @@
 //            return (int)Math.Round(num / (double)factor, MidpointRounding.AwayFromZero) * factor;
 //        }
 
-//        private void InitSlices(uint vectorSize, HashFunction<T>[] hashFunctions)
+//        private void InitSlices(uint vectorSize, IHashFunction<T>[] hashFunctions)
 //        {
 //            var sliceSize = RoundToNearestMultiple(vectorSize, hashFunctions.Length);
 //            for (var i = 0; i < _vector.Length; i++)

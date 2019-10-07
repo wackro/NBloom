@@ -29,7 +29,7 @@ namespace NBloom
 
         private readonly uint? _setSize;
 
-        protected BloomFilter(uint vectorSize, params HashFunction<T>[] hashFunctions)
+        internal BloomFilter(uint vectorSize, params IHashFunction<T>[] hashFunctions)
         {
             if (vectorSize == 0)
             {
@@ -49,7 +49,7 @@ namespace NBloom
             _hashFunctions = hashFunctions;
         }
 
-        protected BloomFilter(uint setSize, float falsePositiveRate, params HashFunction<T>[] hashFunctions)
+        internal BloomFilter(uint setSize, float falsePositiveRate, params IHashFunction<T>[] hashFunctions)
             : this(CalculateOptimalVectorSize(setSize, falsePositiveRate), hashFunctions)
         {
             if (setSize == 0)
@@ -65,7 +65,7 @@ namespace NBloom
             _setSize = setSize;
         }
 
-        protected BloomFilter(uint setSize, uint vectorSize, params HashFunction<T>[] hashFunctions)
+        internal BloomFilter(uint setSize, uint vectorSize, params IHashFunction<T>[] hashFunctions)
             : this(vectorSize, hashFunctions)
         {
             if (setSize == 0)
