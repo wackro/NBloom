@@ -64,8 +64,8 @@ namespace NBloom
             _setSize = setSize;
         }
 
-        public BloomFilter(uint setSize, uint vectorSize, params HashFunction<T>[] hashes)
-            : this(vectorSize, hashes)
+        public BloomFilter(uint setSize, uint vectorSize, params HashFunction<T>[] hashFunctions)
+            : this(vectorSize, hashFunctions)
         {
             if (setSize == 0)
             {
