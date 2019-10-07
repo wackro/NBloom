@@ -25,11 +25,11 @@ namespace NBloom
 
         private double? _falsePositiveRate;
 
-        private readonly HashFunction<T>[] _hashFunctions;
+        private readonly IHashFunction<T>[] _hashFunctions;
 
         private readonly uint? _setSize;
 
-        public BloomFilter(uint vectorSize, params HashFunction<T>[] hashFunctions)
+        protected BloomFilter(uint vectorSize, params HashFunction<T>[] hashFunctions)
         {
             if (vectorSize == 0)
             {
@@ -49,7 +49,7 @@ namespace NBloom
             _hashFunctions = hashFunctions;
         }
 
-        public BloomFilter(uint setSize, float falsePositiveRate, params HashFunction<T>[] hashFunctions)
+        protected BloomFilter(uint setSize, float falsePositiveRate, params HashFunction<T>[] hashFunctions)
             : this(CalculateOptimalVectorSize(setSize, falsePositiveRate), hashFunctions)
         {
             if (setSize == 0)
@@ -65,7 +65,7 @@ namespace NBloom
             _setSize = setSize;
         }
 
-        public BloomFilter(uint setSize, uint vectorSize, params HashFunction<T>[] hashFunctions)
+        protected BloomFilter(uint setSize, uint vectorSize, params HashFunction<T>[] hashFunctions)
             : this(vectorSize, hashFunctions)
         {
             if (setSize == 0)
@@ -85,7 +85,7 @@ namespace NBloom
 
         public abstract bool Contains(T input);
 
-        protected IEnumerable<uint> Hash(T input) => _hashFunctions.Select(x => ToIndex(x.GenerateHashDelegate(input)));
+        protected IEnumerable<uint> Hash(T input) => _hashFunctions.Select(x => ToIndex(x.GenerateHash(input)));
 
         internal static uint CalculateOptimalVectorSize(uint setSize, float falsePositiveRate)
         {

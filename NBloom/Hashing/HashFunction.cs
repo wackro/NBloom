@@ -4,7 +4,7 @@ namespace NBloom.Hashing
 {
     public class HashFunction<TInput> : IHashFunction<TInput>
     {
-        internal Func<TInput, uint> GenerateHashDelegate { get; }
+        private Func<TInput, uint> _generateHashDelegate;
 
         public HashFunction(Func<TInput, uint> generateHashDelegate)
         {
@@ -13,9 +13,9 @@ namespace NBloom.Hashing
                 throw new ArgumentNullException(nameof(generateHashDelegate));
             }
 
-            GenerateHashDelegate = generateHashDelegate;
+            _generateHashDelegate = generateHashDelegate;
         }
 
-        public uint GenerateHash(TInput value) => GenerateHashDelegate(value);
+        public uint GenerateHash(TInput value) => _generateHashDelegate(value);
     }
 }
