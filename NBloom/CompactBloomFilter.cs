@@ -12,19 +12,19 @@ namespace NBloom
 
         internal readonly BitArray Vector;
 
-        public CompactBloomFilter(uint vectorSize, params HashFunction<T>[] hashFunctions)
+        public CompactBloomFilter(uint vectorSize, params IHashFunction<T>[] hashFunctions)
             : base(vectorSize, hashFunctions)
         {
             Vector = new BitArray((int)vectorSize);
         }
 
-        public CompactBloomFilter(uint setSize, float falsePositiveRate, params HashFunction<T>[] hashFunctions)
+        public CompactBloomFilter(uint setSize, float falsePositiveRate, params IHashFunction<T>[] hashFunctions)
             : base(setSize, falsePositiveRate, hashFunctions)
         {
             Vector = new BitArray((int)CalculateOptimalVectorSize(setSize, falsePositiveRate));
         }
 
-        public CompactBloomFilter(uint setSize, uint vectorSize, params HashFunction<T>[] hashFunctions)
+        public CompactBloomFilter(uint setSize, uint vectorSize, params IHashFunction<T>[] hashFunctions)
             : base(setSize, vectorSize, hashFunctions)
         {
             Vector = new BitArray((int)vectorSize);
