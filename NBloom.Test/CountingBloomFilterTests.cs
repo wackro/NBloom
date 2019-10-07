@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 using Xunit;
+using NBloom.Hashing;
 
 namespace NBloom.Test
 {
