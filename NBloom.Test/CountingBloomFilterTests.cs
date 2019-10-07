@@ -46,9 +46,9 @@ namespace NBloom.Test
 
             bloomFilter.Add("test");
 
-            Assert.Equal(ushort.MaxValue, bloomFilter.Vector[0]);
-            Assert.Equal(ushort.MaxValue, bloomFilter.Vector[1]);
-            Assert.Equal(ushort.MaxValue, bloomFilter.Vector[2]);
+            Assert.Equal(byte.MaxValue, bloomFilter.Vector[0]);
+            Assert.Equal(byte.MaxValue, bloomFilter.Vector[1]);
+            Assert.Equal(byte.MaxValue, bloomFilter.Vector[2]);
         }
 
         [Fact]
