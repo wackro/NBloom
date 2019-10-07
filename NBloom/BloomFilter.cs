@@ -84,7 +84,7 @@ namespace NBloom
 
         public abstract bool Contains(T input);
 
-        protected IEnumerable<uint> Hash(T input) => _hashFunctions.Select(x => ToIndex(x.GenerateHash(input)));
+        protected IEnumerable<uint> Hash(T input) => _hashFunctions.Select(x => ToIndex(x.GenerateHashDelegate(input)));
 
         internal static uint CalculateOptimalVectorSize(uint setSize, float falsePositiveRate)
         {

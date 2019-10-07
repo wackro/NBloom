@@ -23,8 +23,8 @@ namespace NBloom
             Vector = new bool[CalculateOptimalVectorSize(setSize, falsePositiveRate)];
         }
 
-        public BoolArrayBloomFilter(uint setSize, uint vectorSize, params HashFunction<T>[] hashes)
-            : base(setSize, vectorSize, hashes)
+        public BoolArrayBloomFilter(uint setSize, uint vectorSize, params HashFunction<T>[] hashFunctions)
+            : base(setSize, vectorSize, hashFunctions)
         {
             Vector = new bool[vectorSize];
         }

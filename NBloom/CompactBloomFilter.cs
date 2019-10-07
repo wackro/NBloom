@@ -23,8 +23,8 @@ namespace NBloom
             Vector = new BitArray((int)CalculateOptimalVectorSize(setSize, falsePositiveRate));
         }
 
-        public CompactBloomFilter(uint setSize, uint vectorSize, params HashFunction<T>[] hashes)
-            : base(setSize, vectorSize, hashes)
+        public CompactBloomFilter(uint setSize, uint vectorSize, params HashFunction<T>[] hashFunctions)
+            : base(setSize, vectorSize, hashFunctions)
         {
             Vector = new BitArray((int)vectorSize);
         }

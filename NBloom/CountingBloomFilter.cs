@@ -22,8 +22,8 @@ namespace NBloom
             Vector = new byte[CalculateOptimalVectorSize(setSize, falsePositiveRate)];
         }
 
-        public CountingBloomFilter(uint setSize, uint vectorSize, params HashFunction<T>[] hashes)
-            : base(setSize, vectorSize, hashes)
+        public CountingBloomFilter(uint setSize, uint vectorSize, params HashFunction<T>[] hashFunctions)
+            : base(setSize, vectorSize, hashFunctions)
         {
             Vector = new byte[vectorSize];
         }
