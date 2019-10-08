@@ -44,7 +44,7 @@ namespace NBloom
         {
             if (setSize == 0)
             {
-                throw new ArgumentException(nameof(setSize), "Must be greater than 0");
+                throw new ArgumentOutOfRangeException(nameof(setSize), "Must be greater than 0");
             }
 
             if (falsePositiveRate < 0 || falsePositiveRate > 1)
