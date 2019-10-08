@@ -17,26 +17,27 @@ namespace NBloom
         private float _falsePositiveRate;
         private uint _setSize;
         private IHashFunction<T>[] _hashFunctions;
-        private readonly Func<T, byte[]> _inputToBytes;
 
         protected BloomFilter(uint setSize, float falsePositiveRate, Func<T, byte[]> inputToBytes)
         {
+            if (inputToBytes == null)
+            {
+                throw new ArgumentNullException(nameof(inputToBytes));
+            }
+
             Init(setSize, falsePositiveRate);
-
-            _inputToBytes = inputToBytes;
-
-            VectorSize = OptimalVectorSize();
-
-            InitDefaultHashFunctions();
+            InitDefaultHashFunctions(inputToBytes);
         }
 
         protected BloomFilter(uint setSize, float falsePositiveRate, IHashFunctionFactory<T> hashFunctionFactory)
         {
+            if (hashFunctionFactory == null)
+            {
+                throw new ArgumentNullException(nameof(hashFunctionFactory));
+            }
+
             Init(setSize, falsePositiveRate);
-
-            VectorSize = OptimalVectorSize();
-
-            _hashFunctions = hashFunctionFactory.GenerateHashFunctions(OptimalHashCount()).ToArray();
+            InitCustomHashFunctions(hashFunctionFactory);
         }
 
         private void Init(uint setSize, float falsePositiveRate)
@@ -53,6 +54,8 @@ namespace NBloom
 
             _setSize = setSize;
             _falsePositiveRate = falsePositiveRate;
+
+            VectorSize = OptimalVectorSize();
         }
 
         public abstract void Add(T input);
@@ -72,15 +75,20 @@ namespace NBloom
 
         private uint OptimalHashCount() => OptimalVectorSize() / _setSize * (uint)Math.Log(2);
 
-        private void InitDefaultHashFunctions()
+        private void InitDefaultHashFunctions(Func<T, byte[]> inputToBytes)
         {
             var hashCount = OptimalHashCount();
             _hashFunctions = new IHashFunction<T>[hashCount];
 
             for (var i = 0; i < hashCount; i++)
             {
-                _hashFunctions[i] = new MurmurHash<T>(_inputToBytes);
+                _hashFunctions[i] = new MurmurHash<T>(inputToBytes);
             }
+        }
+
+        private void InitCustomHashFunctions(IHashFunctionFactory<T> hashFunctionFactory)
+        {
+            _hashFunctions = hashFunctionFactory.GenerateHashFunctions(OptimalHashCount()).ToArray();
         }
     }
 }
