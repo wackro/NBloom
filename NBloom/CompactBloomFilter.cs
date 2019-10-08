@@ -8,8 +8,8 @@ namespace NBloom
     {
         internal readonly BitArray Vector;
 
-        public CompactBloomFilter(uint setSize, float falsePositiveRate, Func<T, byte[]> getBytesDelegate)
-            : base(setSize, falsePositiveRate, getBytesDelegate)
+        public CompactBloomFilter(uint setSize, float falsePositiveRate, Func<T, byte[]> inputToBytes)
+            : base(setSize, falsePositiveRate, inputToBytes)
         {
             Vector = new BitArray((int)VectorSize);
         }

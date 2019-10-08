@@ -9,26 +9,16 @@ namespace NBloom.Hashing
     {
         private static uint _hashSeed = 0;
         private readonly Murmur32 _hashFunction = MurmurHash.Create32(_hashSeed++);
-        private Func<TInput, byte[]> _getBytesDelegate;
+        private readonly Func<TInput, byte[]> _inputToBytes;
 
-        public MurmurHash(Func<TInput, byte[]> getBytesDelegate = null)
+        public MurmurHash(Func<TInput, byte[]> inputToBytes)
         {
-            _getBytesDelegate = getBytesDelegate;
+            _inputToBytes = inputToBytes;
         }
 
         public uint GenerateHash(TInput value)
         {
-            byte[] bytes;
-
-            if (_getBytesDelegate != null)
-            {
-                bytes = _getBytesDelegate(value);
-            }
-            else
-            {
-                bytes = _getBytesDelegate(value);
-            }
-
+            var bytes = _inputToBytes(value);
             var hashBytes = _hashFunction.ComputeHash(bytes);
             var hashUint = BitConverter.ToUInt32(hashBytes, 0);
 

@@ -8,8 +8,8 @@ namespace NBloom
     {
         internal byte[] Vector { get; }
 
-        public CountingBloomFilter(uint setSize, float falsePositiveRate, Func<T, byte[]> getBytesDelegate)
-            : base(setSize, falsePositiveRate, getBytesDelegate)
+        public CountingBloomFilter(uint setSize, float falsePositiveRate, Func<T, byte[]> inputToBytes)
+            : base(setSize, falsePositiveRate, inputToBytes)
         {
             Vector = new byte[VectorSize];
         }

@@ -12,8 +12,8 @@ namespace NBloom
         private const byte GROWTH_RATIO = 2;
         private const float TIGHTENING_RATIO = 0.8f;
 
-        public ScalingBloomFilter(uint setSize, float falsePositiveRate, Func<T, byte[]> getBytesDelegate)
-            : base(setSize, falsePositiveRate, getBytesDelegate)
+        public ScalingBloomFilter(uint setSize, float falsePositiveRate, Func<T, byte[]> inputToBytes)
+            : base(setSize, falsePositiveRate, inputToBytes)
         {
             _vector = new bool[VectorSize][];
 

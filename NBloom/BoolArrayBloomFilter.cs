@@ -8,8 +8,8 @@ namespace NBloom
     {
         internal readonly bool[] Vector;
 
-        public BoolArrayBloomFilter(uint setSize, float falsePositiveRate, Func<T, byte[]> getBytesDelegate)
-            : base(setSize, falsePositiveRate, getBytesDelegate)
+        public BoolArrayBloomFilter(uint setSize, float falsePositiveRate, Func<T, byte[]> inputToBytes)
+            : base(setSize, falsePositiveRate, inputToBytes)
         {
             Vector = new bool[VectorSize];
         }

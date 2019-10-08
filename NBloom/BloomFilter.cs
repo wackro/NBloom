@@ -17,9 +17,9 @@ namespace NBloom
         private readonly float _falsePositiveRate;
         private readonly uint _setSize;
         private IHashFunction<T>[] _hashFunctions;
-        private readonly Func<T, byte[]> _getBytesDelegate;
+        private readonly Func<T, byte[]> _inputToBytes;
 
-        protected BloomFilter(uint setSize, float falsePositiveRate, Func<T, byte[]> getBytesDelegate = null)
+        protected BloomFilter(uint setSize, float falsePositiveRate, Func<T, byte[]> inputToBytes)
         {
             if (setSize == 0)
             {
@@ -33,7 +33,7 @@ namespace NBloom
 
             _setSize = setSize;
             _falsePositiveRate = falsePositiveRate;
-            _getBytesDelegate = getBytesDelegate;
+            _inputToBytes = inputToBytes;
 
             VectorSize = OptimalVectorSize();
             InitHashFunctions();
@@ -63,7 +63,7 @@ namespace NBloom
 
             for (var i = 0; i < hashCount; i++)
             {
-                _hashFunctions[i] = new MurmurHash<T>(_getBytesDelegate);
+                _hashFunctions[i] = new MurmurHash<T>(_inputToBytes);
             }
         }
     }
