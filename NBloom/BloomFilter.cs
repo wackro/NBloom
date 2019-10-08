@@ -8,7 +8,13 @@ namespace NBloom
 {
     public abstract class BloomFilter<T>
     {
-        public float ActualFalsePositiveRate => (float)Math.Pow(1 - Math.Exp(-(_hashFunctions.Length) * _setSize / VectorSize), _hashFunctions.Length);
+        public float ActualFalsePositiveRate
+        {
+            get
+            {
+                return (float)Math.Pow(1 - Math.Exp(-(_hashFunctions.Length) * _setSize / VectorSize), _hashFunctions.Length);
+            }
+        }
 
         protected uint VectorSize { get; private set; }
 
@@ -71,7 +77,10 @@ namespace NBloom
 
         internal uint ToIndex(uint hash) => hash % VectorSize;
 
-        internal uint OptimalVectorSize() => (uint)Math.Ceiling(_setSize * Math.Log(_falsePositiveRate) / Math.Log(1 / Math.Pow(2, Math.Log(2))));
+        internal uint OptimalVectorSize()
+        {
+            return (uint)Math.Ceiling(_setSize * Math.Log(_falsePositiveRate) / Math.Log(1 / Math.Pow(2, Math.Log(2))));
+        }
 
         private uint OptimalHashCount() => OptimalVectorSize() / _setSize * (uint)Math.Log(2);
 
