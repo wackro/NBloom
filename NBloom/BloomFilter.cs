@@ -14,12 +14,32 @@ namespace NBloom
 
         protected int HashCount => _hashFunctions.Length;
 
-        private readonly float _falsePositiveRate;
-        private readonly uint _setSize;
+        private float _falsePositiveRate;
+        private uint _setSize;
         private IHashFunction<T>[] _hashFunctions;
         private readonly Func<T, byte[]> _inputToBytes;
 
         protected BloomFilter(uint setSize, float falsePositiveRate, Func<T, byte[]> inputToBytes)
+        {
+            Init(setSize, falsePositiveRate);
+
+            _inputToBytes = inputToBytes;
+
+            VectorSize = OptimalVectorSize();
+
+            InitDefaultHashFunctions();
+        }
+
+        protected BloomFilter(uint setSize, float falsePositiveRate, IHashFunctionFactory<T> hashFunctionFactory)
+        {
+            Init(setSize, falsePositiveRate);
+
+            VectorSize = OptimalVectorSize();
+
+            _hashFunctions = hashFunctionFactory.GenerateHashFunctions(OptimalHashCount()).ToArray();
+        }
+
+        private void Init(uint setSize, float falsePositiveRate)
         {
             if (setSize == 0)
             {
@@ -33,10 +53,6 @@ namespace NBloom
 
             _setSize = setSize;
             _falsePositiveRate = falsePositiveRate;
-            _inputToBytes = inputToBytes;
-
-            VectorSize = OptimalVectorSize();
-            InitHashFunctions();
         }
 
         public abstract void Add(T input);
@@ -56,7 +72,7 @@ namespace NBloom
 
         private uint OptimalHashCount() => OptimalVectorSize() / _setSize * (uint)Math.Log(2);
 
-        private void InitHashFunctions()
+        private void InitDefaultHashFunctions()
         {
             var hashCount = OptimalHashCount();
             _hashFunctions = new IHashFunction<T>[hashCount];
