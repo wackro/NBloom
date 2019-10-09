@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 using Xunit;
-using NBloom.Hashing;
 
 namespace NBloom.Test
 {
@@ -12,14 +11,7 @@ namespace NBloom.Test
         [Fact]
         public void Add__AnyInput__IncrementsArrayPositionsByOne()
         {
-            var mockHashes = new HashFunction<string>[]
-            {
-                new HashFunction<string>(x => 0),
-                new HashFunction<string>(x => 1),
-                new HashFunction<string>(x => 2)
-            };
-
-            var bloomFilter = new CountingBloomFilter<string>(10, mockHashes);
+            var bloomFilter = new CountingBloomFilter<string>(1000, 0.001f, x => Encoding.ASCII.GetBytes(x));
 
             bloomFilter.Add("test");
 
@@ -31,14 +23,7 @@ namespace NBloom.Test
         [Fact]
         public void Add__AddOnTopOfFullIndex__ShouldNotOverflow()
         {
-            var mockHashes = new HashFunction<string>[]
-            {
-                new HashFunction<string>(x => 0),
-                new HashFunction<string>(x => 1),
-                new HashFunction<string>(x => 2)
-            };
-
-            var bloomFilter = new CountingBloomFilter<string>(3, mockHashes);
+            var bloomFilter = new CountingBloomFilter<string>(1000, 0.001f, x => Encoding.ASCII.GetBytes(x));
 
             bloomFilter.Vector[0] = byte.MaxValue;
             bloomFilter.Vector[1] = byte.MaxValue;
@@ -54,14 +39,7 @@ namespace NBloom.Test
         [Fact]
         public void Remove__AnyInput__DecrementsArrayPositionsByOne()
         {
-            var mockHashes = new HashFunction<string>[]
-            {
-                new HashFunction<string>(x => 0),
-                new HashFunction<string>(x => 1),
-                new HashFunction<string>(x => 2)
-            };
-
-            var bloomFilter = new CountingBloomFilter<string>(10, mockHashes);
+            var bloomFilter = new CountingBloomFilter<string>(1000, 0.001f, x => Encoding.ASCII.GetBytes(x));
 
             bloomFilter.Vector[0] = 1;
             bloomFilter.Vector[1] = 1;
@@ -77,14 +55,7 @@ namespace NBloom.Test
         [Fact]
         public void Remove__SomethingThatHasNotBeenAdded__DoesNotThrow()
         {
-            var mockHashes = new HashFunction<string>[]
-            {
-                new HashFunction<string>(x => 0),
-                new HashFunction<string>(x => 1),
-                new HashFunction<string>(x => 2)
-            };
-
-            var bloomFilter = new CountingBloomFilter<string>(10, mockHashes);
+            var bloomFilter = new CountingBloomFilter<string>(1000, 0.001f, x => Encoding.ASCII.GetBytes(x));
 
             bloomFilter.Remove("test");
         }
@@ -92,14 +63,7 @@ namespace NBloom.Test
         [Fact]
         public void Add__RemoveWhenIndicesAreZero__DoesNotUnderflow()
         {
-            var mockHashes = new HashFunction<string>[]
-            {
-                new HashFunction<string>(x => 0),
-                new HashFunction<string>(x => 1),
-                new HashFunction<string>(x => 2)
-            };
-
-            var bloomFilter = new CountingBloomFilter<string>(3, mockHashes);
+            var bloomFilter = new CountingBloomFilter<string>(1000, 0.001f, x => Encoding.ASCII.GetBytes(x));
 
             Assert.Equal(0, bloomFilter.Vector[0]);
             Assert.Equal(0, bloomFilter.Vector[1]);

@@ -8,10 +8,10 @@ namespace NBloom
     {
         internal readonly bool[] Vector;
 
-        public BoolArrayBloomFilter(uint setSize, float falsePositiveRate, Func<T, byte[]> inputToBytes)
-            : base(setSize, falsePositiveRate, inputToBytes)
+        public BoolArrayBloomFilter(uint setSize, float falsePositiveRate, Func<T, byte[]> convertToBytes)
+            : base(setSize, falsePositiveRate, convertToBytes)
         {
-            Vector = new bool[VectorSize];
+            Vector = new bool[OptimalVectorSize];
         }
 
         public override void Add(T input)

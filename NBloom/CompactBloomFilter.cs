@@ -11,7 +11,7 @@ namespace NBloom
         public CompactBloomFilter(uint setSize, float falsePositiveRate, Func<T, byte[]> inputToBytes)
             : base(setSize, falsePositiveRate, inputToBytes)
         {
-            Vector = new BitArray((int)VectorSize);
+            Vector = new BitArray((int)OptimalVectorSize);
         }
 
         public override void Add(T input)

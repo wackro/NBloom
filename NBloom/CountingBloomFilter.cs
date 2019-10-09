@@ -6,12 +6,12 @@ namespace NBloom
 {
     public class CountingBloomFilter<T> : BloomFilter<T>
     {
-        internal byte[] Vector { get; }
+        internal byte[] Vector;
 
         public CountingBloomFilter(uint setSize, float falsePositiveRate, Func<T, byte[]> inputToBytes)
             : base(setSize, falsePositiveRate, inputToBytes)
         {
-            Vector = new byte[VectorSize];
+            Vector = new byte[OptimalVectorSize];
         }
 
         public override void Add(T input)

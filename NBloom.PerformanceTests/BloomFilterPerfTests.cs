@@ -2,27 +2,29 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
-using NBloom.Hashing;
 
 namespace NBloom.PerformanceTests
 {
     class BloomFilterPerfTests
     {
-        static Stopwatch _stopwatch = new Stopwatch();
-        static HashFunction<int>[] hashFunctions = new HashFunction<int>[]
-            {
-                new HashFunction<int>(x => (uint)x.GetHashCode()),
-                new HashFunction<int>(x => (uint)x.GetHashCode() + 1),
-                new HashFunction<int>(x => (uint)x.GetHashCode() + 2),
-            };
-
-        static BoolArrayBloomFilter<int> b = new BoolArrayBloomFilter<int>(2000000000, hashFunctions);
-        static CompactBloomFilter<int> b2 = new CompactBloomFilter<int>(2000000000, hashFunctions);
+        static Stopwatch stopwatch;
+        static BoolArrayBloomFilter<int> b;
+        static CompactBloomFilter<int> b2;
 
         static void Output(object o) => Console.WriteLine(o.ToString());
 
-        static int[] testInputs = new int[100000];
+        static int[] testInputs;
+
+        static BloomFilterPerfTests()
+        {
+            stopwatch = new Stopwatch();
+            b = new BoolArrayBloomFilter<int>(2000000000, 0.0001f, x => BitConverter.GetBytes(x));
+            b2 = new CompactBloomFilter<int>(2000000000, 0.0001f, x => BitConverter.GetBytes(x));
+
+            testInputs = new int[100000];
+        }
 
         static void Main(string[] args)
         {
@@ -80,15 +82,15 @@ namespace NBloom.PerformanceTests
 
             for (var r = 0; r < runs; r++)
             {
-                _stopwatch.Start();
+                stopwatch.Start();
 
                 for (var i = 0; i < iterations; i++)
                 {
                     a();
                 }
 
-                times.Add(_stopwatch.ElapsedMilliseconds);
-                _stopwatch.Reset();
+                times.Add(stopwatch.ElapsedMilliseconds);
+                stopwatch.Reset();
 
                 cleanup();
             }

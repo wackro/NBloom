@@ -8,19 +8,17 @@ namespace NBloom
 {
     public abstract class BloomFilter<T>
     {
-        public float ActualFalsePositiveRate
+        public float FalsePositiveRate
         {
             get
             {
-                return (float)Math.Pow(1 - Math.Exp(-(_hashFunctions.Length) * _setSize / VectorSize), _hashFunctions.Length);
+                return (float)Math.Pow(1 - Math.Exp(-_hashFunctions.Length / ((float)OptimalVectorSize / _setSize)), _hashFunctions.Length);
             }
         }
 
-        protected uint VectorSize { get; private set; }
+        protected internal int HashCount => _hashFunctions.Length;
 
-        protected int HashCount => _hashFunctions.Length;
-
-        internal uint OptimalVectorSize
+        protected internal uint OptimalVectorSize
         {
             get
             {
@@ -28,7 +26,7 @@ namespace NBloom
             }
         }
 
-        private ushort OptimalHashCount
+        internal ushort OptimalHashCount
         {
             get
             {
@@ -51,18 +49,6 @@ namespace NBloom
 
         protected BloomFilter(uint setSize, float falsePositiveRate, IHashFunctionFactory<T> hashFunctionFactory)
         {
-            if (hashFunctionFactory == null)
-            {
-                throw new ArgumentNullException(nameof(hashFunctionFactory));
-            }
-
-            Init(setSize, falsePositiveRate);
-
-            _hashFunctions = hashFunctionFactory.GenerateHashFunctions(OptimalHashCount);
-        }
-
-        private void Init(uint setSize, float falsePositiveRate)
-        {
             if (setSize == 0)
             {
                 throw new ArgumentOutOfRangeException(nameof(setSize), "Must be greater than 0");
@@ -73,10 +59,14 @@ namespace NBloom
                 throw new ArgumentOutOfRangeException(nameof(falsePositiveRate), "Must be between 0 and 1");
             }
 
+            if (hashFunctionFactory == null)
+            {
+                throw new ArgumentNullException(nameof(hashFunctionFactory));
+            }
+
             _setSize = setSize;
             _falsePositiveRate = falsePositiveRate;
-
-            VectorSize = OptimalVectorSize;
+            _hashFunctions = hashFunctionFactory.GenerateHashFunctions(OptimalHashCount);
         }
 
         public abstract void Add(T input);
@@ -90,7 +80,7 @@ namespace NBloom
 
         protected IEnumerable<uint> Hash(T input)
         {
-            return _hashFunctions.Select(x => x.GenerateHash(input) % VectorSize);
+            return _hashFunctions.Select(x => x.GenerateHash(input) % OptimalVectorSize);
         }
     }
 }

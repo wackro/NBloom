@@ -15,7 +15,7 @@ namespace NBloom
         public ScalingBloomFilter(uint setSize, float falsePositiveRate, Func<T, byte[]> inputToBytes)
             : base(setSize, falsePositiveRate, inputToBytes)
         {
-            _vector = new bool[VectorSize][];
+            _vector = new bool[OptimalHashCount][];
 
             InitSlices();
         }
@@ -47,7 +47,7 @@ namespace NBloom
 
         private void InitSlices()
         {
-            var sliceSize = RoundToNearestMultiple(VectorSize, HashCount);
+            var sliceSize = RoundToNearestMultiple(OptimalVectorSize, HashCount);
             for (var i = 0; i < _vector.Length; i++)
             {
                 _vector[i] = new bool[sliceSize];

@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Text;
 using NBloom.Hashing;
 using Xunit;
 
@@ -7,128 +8,77 @@ namespace NBloom.Test
 {
     public class BoolArrayBloomFilterTests
     {
-        private static uint c = 0;
-        private readonly Func<string, uint> mockHashFunctionDelegate = x => c++;
-
-        [Theory]
-        [InlineData(1)]
-        [InlineData(145345)]
-        [InlineData(999999)]
-        public void Initialisation__BitVecorSizeGreaterThanOne__InitialisesBitVectorToThatValue(int bitVectorSize)
-        {
-            var bloomFilter = new BoolArrayBloomFilter<string>((uint)bitVectorSize, GenerateMockHashFunctions(bitVectorSize));
-
-            Assert.Equal(bitVectorSize, bloomFilter.Vector.Length);
-        }
-
         [Fact]
-        public void Initialisation__BitVecorSizeOfOne__ThrowsArgumentException()
-        {
-            Assert.Throws<ArgumentException>(() => new BoolArrayBloomFilter<string>(0));
-        }
-
-        [Theory]
-        [InlineData(1)]
-        [InlineData(145345)]
-        [InlineData(999999)]
-        public void Initialisation__BitVectorAnySize__ContainsAllZeroes(int bitVectorSize)
+        public void Initialisation__JustInitialised__ContainsAllZeroes()
         {
             var expectedInitialValue = false;
 
-            var bloomFilter = new BoolArrayBloomFilter<string>((uint)bitVectorSize, GenerateMockHashFunctions(bitVectorSize));
+            var bloomFilter = new BoolArrayBloomFilter<string>(10000, 0.001f, x => Encoding.ASCII.GetBytes(x));
 
             Assert.All(bloomFilter.Vector, x => Assert.Equal(expectedInitialValue, x));
         }
 
         [Fact]
-        public void Initialisation__NullHashFunctions__ThrowsArgumentNullException()
+        public void Initialisation__NullDelegate__ThrowsArgumentNullException()
         {
-            var hashFunctions = (HashFunction<string>[])null;
+            var convertToBytesDelegate = (Func<string, byte[]>)null;
 
-            Assert.Throws<ArgumentNullException>(() => new BoolArrayBloomFilter<string>(5, hashFunctions));
+            Assert.Throws<ArgumentNullException>(() => new BoolArrayBloomFilter<string>(10000, 0.001f, convertToBytesDelegate));
+        }
+
+        [Theory]
+        [InlineData(-0.1f)]
+        [InlineData(1.1f)]
+        public void Initialisation__FalsePositiveOutOfBounds__ThrowsArgumentOutOfRangeException(float falsePositiveRate)
+        {
+            Assert.Throws<ArgumentOutOfRangeException>(() => new BoolArrayBloomFilter<string>(10000, falsePositiveRate, x => Encoding.ASCII.GetBytes(x)));
         }
 
         [Fact]
-        public void Initialisation__NumberOfHashFunctionsMoreThanBitVectorSize__ThrowsArgumentException()
+        public void Initialisation__SetSizeOfZero__ThrowsArgumentOutOfRangeException()
         {
-            var hashFunctions = GenerateMockHashFunctions(3);
-
-            Assert.Throws<ArgumentException>(() => new BoolArrayBloomFilter<string>(2, hashFunctions));
+            Assert.Throws<ArgumentOutOfRangeException>(() => new BoolArrayBloomFilter<string>(0, 0.001f, x => Encoding.ASCII.GetBytes(x)));
         }
 
-        [Theory]
-        [InlineData(1, 1)]
-        [InlineData(81973489u, 50)]
-        [InlineData(776911693u, 9999)]
-        public void ConvertToIndex__AnyValue__MapsToIntegerWithinRangeOfBitVector(uint hash, uint bitVectorSize)
+        [Fact]
+        public void Initialisation__HashCountAndVectorSize__AreOptimal()
         {
-            var bloomFilter = new BoolArrayBloomFilter<string>(bitVectorSize, GenerateMockHashFunctions(1));
+            var bloomFilter = new BoolArrayBloomFilter<string>(10000, 0.001f, x => Encoding.ASCII.GetBytes(x));
 
-            var index = bloomFilter.ToIndex(hash);
-
-            Assert.InRange(index, 0u, (uint)bloomFilter.Vector.Length - 1);
+            Assert.Equal((uint)bloomFilter.HashCount, bloomFilter.OptimalHashCount);
+            Assert.Equal((uint)bloomFilter.Vector.Length, bloomFilter.OptimalVectorSize);
         }
 
-        [Theory]
-        [InlineData(1)]
-        [InlineData(71234616)]
-        public void ConvertToIndex__IdenticalInputs__ReturnTheSameValue(uint hash)
+        [Theory(Skip ="is the formula for optimal m correct?")]
+        [InlineData(0.1f)]
+        [InlineData(0.01f)]
+        [InlineData(0.001f)]
+        [InlineData(0.0001f)]
+        public void Initialisation__FalsePositiveRate__IsLessThanOrEqualToSpecified(float falsePositiveRate)
         {
-            var bloomFilter = new BoolArrayBloomFilter<string>(5, GenerateMockHashFunctions(2));
+            var bloomFilter = new BoolArrayBloomFilter<string>(10000, falsePositiveRate, x => Encoding.ASCII.GetBytes(x));
 
-            var expectedIndex = bloomFilter.ToIndex(hash);
-
-            var indexes = Enumerable.Range(0, 10).Select(x => bloomFilter.ToIndex(hash));
-
-            Assert.All(indexes, x => Assert.Equal(expectedIndex, x));
+            Assert.True(bloomFilter.FalsePositiveRate <= falsePositiveRate);
         }
 
-        [Theory]
-        [InlineData(2)]
-        [InlineData(9999)]
-        public void Add__AnyValue__BitVectorHasBitsModified(int numHashFunctions)
+        [Fact]
+        public void Add__AnyValue__ModifiesVectorInKPlaces()
         {
-            var bloomFilter = new BoolArrayBloomFilter<string>(999999, GenerateMockHashFunctions(numHashFunctions));
+            var bloomFilter = new BoolArrayBloomFilter<string>(10000, 0.001f, x => Encoding.ASCII.GetBytes(x));
 
-            bloomFilter.Add("097a6sdf0");
+            var expectedBitsModified = bloomFilter.HashCount;
 
-            var bitVectorModified = bloomFilter.Vector.Any(x => x == true);
+            bloomFilter.Add("test");
 
-            Assert.True(bitVectorModified);
-        }
+            var numModifiedBits = bloomFilter.Vector.Count(x => x == true);
 
-        [Fact(Skip = "Need to work out how to count how many times the internal Add() was called")]
-        public void Add__Enumerable__AddsAllElementsInEnumerable()
-        {
-            var bloomFilter = new BoolArrayBloomFilter<string>(999999, GenerateMockHashFunctions(3));
-            var inputs = new string[] { "test1", "test", "test3" };
-
-            bloomFilter.Add(inputs);
-
-            var bitVectorModified = bloomFilter.Vector.Any(x => x == true);
-
-            Assert.True(bitVectorModified);
-        }
-
-        [Fact(Skip = "Need to test this from the inside by setting manipulating the bit vector and hash values")]
-        public void Test__AfterAdding__NonAddedValueTestsAsFalse()
-        {
-            var inputs = new string[] { "cat", "dog", "horse", "pig", "chicken" };
-
-            var bloomFilter = new BoolArrayBloomFilter<string>(20, GenerateMockHashFunctions(2));
-
-            foreach(var i in inputs)
-            {
-                bloomFilter.Add(i);
-            }
-
-            Assert.False(bloomFilter.Contains("donkey"));
+            Assert.Equal(expectedBitsModified, numModifiedBits);
         }
 
         [Fact]
         public void Clear__DirtyVector__ResultsInClearedVector()
         {
-            var bloomfilter = new BoolArrayBloomFilter<string>(20, GenerateMockHashFunctions(20));
+            var bloomfilter = new BoolArrayBloomFilter<string>(10, 0.001f, x => Encoding.ASCII.GetBytes(x));
 
             bloomfilter.Vector[0] = true;
             bloomfilter.Vector[5] = true;
@@ -138,29 +88,6 @@ namespace NBloom.Test
             bloomfilter.Clear();
 
             Assert.All(bloomfilter.Vector, x => Assert.False(x));
-        }
-
-        [Theory]
-        [InlineData(1)]
-        [InlineData(50)]
-        [InlineData(100)]
-        public void CalculateOptimalBitVectorSize__AnySetSize__ReturnsGreaterThanSetSize(uint setSize)
-        {
-            var optimal = new BoolArrayBloomFilter<string>(20, GenerateMockHashFunctions(20)).OptimalVectorSize;
-
-            Assert.True(optimal > setSize);
-        }
-
-        private HashFunction<string>[] GenerateMockHashFunctions(int number)
-        {
-            var hashFunctions = new HashFunction<string>[number];
-
-            for(var i = 0; i < number; i++)
-            {
-                hashFunctions[i] = new HashFunction<string>(mockHashFunctionDelegate);
-            }
-
-            return hashFunctions;
         }
     }
 }
