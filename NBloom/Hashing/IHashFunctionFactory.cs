@@ -5,6 +5,6 @@ namespace NBloom.Hashing
 {
     public interface IHashFunctionFactory<T>
     {
-        IEnumerable<IHashFunction<T>> GenerateHashFunctions(uint quantity);
+        IHashFunction<T>[] GenerateHashFunctions(ushort quantity);
     }
 }
