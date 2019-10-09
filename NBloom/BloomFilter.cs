@@ -41,15 +41,12 @@ namespace NBloom
         private readonly IHashFunction<T>[] _hashFunctions;
 
         protected BloomFilter(uint setSize, float falsePositiveRate, Func<T, byte[]> inputToBytes)
+            : this (setSize, falsePositiveRate, new MurmurHashFactory<T>(inputToBytes))
         {
             if (inputToBytes == null)
             {
                 throw new ArgumentNullException(nameof(inputToBytes));
             }
-
-            Init(setSize, falsePositiveRate);
-
-            _hashFunctions = new MurmurHashFactory<T>(inputToBytes).GenerateHashFunctions(OptimalHashCount);
         }
 
         protected BloomFilter(uint setSize, float falsePositiveRate, IHashFunctionFactory<T> hashFunctionFactory)
