@@ -47,7 +47,7 @@ namespace NBloom
 
         private void InitSlices()
         {
-            var sliceSize = RoundToNearestMultiple(OptimalVectorSize, HashCount);
+            var sliceSize = RoundToNearestMultiple(OptimalVectorSize, OptimalHashCount);
             for (var i = 0; i < _vector.Length; i++)
             {
                 _vector[i] = new bool[sliceSize];

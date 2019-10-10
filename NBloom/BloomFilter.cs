@@ -16,8 +16,6 @@ namespace NBloom
             }
         }
 
-        protected internal int HashCount => _hashFunctions.Length;
-
         protected internal uint OptimalVectorSize
         {
             get
