@@ -73,14 +73,14 @@ namespace NBloom
 
         public void Add(IEnumerable<T> inputs)
         {
-            Parallel.ForEach(inputs, (i) => Add(i));
+            Parallel.ForEach(inputs, i => Add(i));
         }
 
         public abstract bool Contains(T input);
 
         protected IEnumerable<uint> Hash(T input)
         {
-            return _hashFunctions.Select(x => x.GenerateHash(input) % OptimalVectorSize);
+            return _hashFunctions.Select(x => x.GenerateHash(input) % (uint)_hashFunctions.Length);
         }
     }
 }
