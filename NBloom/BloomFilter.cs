@@ -16,19 +16,31 @@ namespace NBloom
             }
         }
 
+        private uint? _optimalVectorSize;
         protected internal uint OptimalVectorSize
         {
             get
             {
-                return (uint)Math.Ceiling(_setSize * Math.Log(_falsePositiveRate) / Math.Log(1 / Math.Pow(2, Math.Log(2))));
+                if (!_optimalVectorSize.HasValue)
+                {
+                    _optimalVectorSize = (uint)Math.Ceiling(_setSize * Math.Log(_falsePositiveRate) / Math.Log(1 / Math.Pow(2, Math.Log(2))));
+                }
+
+                return _optimalVectorSize.Value;
             }
         }
 
+        private ushort? _optimalHashCount;
         internal ushort OptimalHashCount
         {
             get
             {
-                return (ushort)(OptimalVectorSize / _setSize * Math.Log(2));
+                if (!_optimalHashCount.HasValue)
+                {
+                    _optimalHashCount = (ushort)(OptimalVectorSize / _setSize * Math.Log(2));
+                }
+
+                return _optimalHashCount.Value;
             }
         }
 
@@ -76,9 +88,9 @@ namespace NBloom
 
         public abstract bool Contains(T input);
 
-        protected IEnumerable<uint> Hash(T input)
+        protected internal IEnumerable<uint> Hash(T input)
         {
-            return _hashFunctions.Select(x => x.GenerateHash(input) % (uint)_hashFunctions.Length);
+            return _hashFunctions.Select(x => x.GenerateHash(input) % OptimalVectorSize).Distinct();
         }
     }
 }
