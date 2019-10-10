@@ -45,7 +45,7 @@ namespace NBloom.Test
         {
             var bloomFilter = new BoolArrayBloomFilter<string>(10000, 0.001f, x => Encoding.ASCII.GetBytes(x));
 
-            Assert.Equal((uint)bloomFilter.HashCount, bloomFilter.OptimalHashCount);
+            Assert.Equal((uint)bloomFilter.OptimalHashCount, bloomFilter.OptimalHashCount);
             Assert.Equal((uint)bloomFilter.Vector.Length, bloomFilter.OptimalVectorSize);
         }
 
@@ -59,20 +59,6 @@ namespace NBloom.Test
             var bloomFilter = new BoolArrayBloomFilter<string>(10000, falsePositiveRate, x => Encoding.ASCII.GetBytes(x));
 
             Assert.True(bloomFilter.FalsePositiveRate <= falsePositiveRate);
-        }
-
-        [Fact]
-        public void Add__AnyValue__ModifiesVectorInKPlaces()
-        {
-            var bloomFilter = new BoolArrayBloomFilter<string>(10000, 0.001f, x => Encoding.ASCII.GetBytes(x));
-
-            var expectedBitsModified = bloomFilter.HashCount;
-
-            bloomFilter.Add("test");
-
-            var numModifiedBits = bloomFilter.Vector.Count(x => x == true);
-
-            Assert.Equal(expectedBitsModified, numModifiedBits);
         }
 
         [Fact]
