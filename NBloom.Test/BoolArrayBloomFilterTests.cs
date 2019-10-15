@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 using System.Text;
-using NBloom.Hashing;
 using Xunit;
 
 namespace NBloom.Test
