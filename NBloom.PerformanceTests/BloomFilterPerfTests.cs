@@ -24,16 +24,16 @@ namespace NBloom.PerformanceTests
             }
 
             // 6000
-            Output(MeasureTime(() => b.Add(testInputs), () => b.Clear(), 100, 5));
+            Output(MeasureTime(() => b.Add(testInputs), () => b.Reset(), 100, 5));
 
             // 7700
-            Output(MeasureTime(() => b2.Add(testInputs), () => b2.Clear(), 100, 5));
+            Output(MeasureTime(() => b2.Add(testInputs), () => b2.Reset(), 100, 5));
 
             // 3
-            Output(MeasureTime(() => b.Contains(1), () => b.Clear(), 10000, 5));
+            Output(MeasureTime(() => b.Contains(1), () => b.Reset(), 10000, 5));
 
             // 3
-            Output(MeasureTime(() => b2.Contains(1), () => b2.Clear(), 10000, 5));
+            Output(MeasureTime(() => b2.Contains(1), () => b2.Reset(), 10000, 5));
 
             Console.ReadLine();
         }

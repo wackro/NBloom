@@ -61,7 +61,7 @@ namespace NBloom.Test
         }
 
         [Fact]
-        public void Clear__DirtyVector__ResultsInClearedVector()
+        public void Reset__PopulatedVector__ResultsInClearedVector()
         {
             var bloomfilter = new BoolArrayBloomFilter<string>(10, 0.001f, x => Encoding.ASCII.GetBytes(x));
 
@@ -70,7 +70,7 @@ namespace NBloom.Test
             bloomfilter.Vector[10] = true;
             bloomfilter.Vector[15] = true;
 
-            bloomfilter.Clear();
+            bloomfilter.Reset();
 
             Assert.All(bloomfilter.Vector, x => Assert.False(x));
         }

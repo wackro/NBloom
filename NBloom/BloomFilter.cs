@@ -8,6 +8,9 @@ namespace NBloom
 {
     public abstract class BloomFilter<T>
     {
+        /// <summary>
+        /// Returns the false positive rate for this bloom filter.
+        /// </summary>
         public float FalsePositiveRate
         {
             get
@@ -17,6 +20,10 @@ namespace NBloom
         }
 
         private uint? _optimalVectorSize;
+
+        /// <summary>
+        /// Returns the optimal vector size (m) for this bloom filter.
+        /// </summary>
         protected internal uint OptimalVectorSize
         {
             get
@@ -31,6 +38,10 @@ namespace NBloom
         }
 
         private ushort? _optimalHashCount;
+
+        /// <summary>
+        /// Returns the optimal number of hashes (k) for this bloom filter.
+        /// </summary>
         internal ushort OptimalHashCount
         {
             get
@@ -48,6 +59,12 @@ namespace NBloom
         private uint _setSize;
         private readonly IHashFunction<T>[] _hashFunctions;
 
+        /// <summary>
+        /// Instantiates a new bloom filter. The default hashing function (Murmurhash) will be used.
+        /// </summary>
+        /// <param name="setSize">The number of elements in the bloom filter (m)</param>
+        /// <param name="falsePositiveRate">The maximum false positive rate</param>
+        /// <param name="inputToBytes">A delegate to turn <typeparamref name="T"/> into a byte array.</param>
         protected BloomFilter(uint setSize, float falsePositiveRate, Func<T, byte[]> inputToBytes)
             : this (setSize, falsePositiveRate, new MurmurHashFactory<T>(inputToBytes))
         {
@@ -57,6 +74,12 @@ namespace NBloom
             }
         }
 
+        /// <summary>
+        /// Instantiates a new bloom fitler with a custom hashing factory.
+        /// </summary>
+        /// <param name="setSize">The number of elements in the bloom filter (m)</param>
+        /// <param name="falsePositiveRate">The maximum false positive rate</param>
+        /// <param name="hashFunctionFactory">The custom hash function factory</param>
         protected BloomFilter(uint setSize, float falsePositiveRate, IHashFunctionFactory<T> hashFunctionFactory)
         {
             if (setSize == 0)
@@ -79,15 +102,39 @@ namespace NBloom
             _hashFunctions = hashFunctionFactory.GenerateHashFunctions(OptimalHashCount);
         }
 
+        /// <summary>
+        /// Add an input into the bloom filter.
+        /// </summary>
+        /// <param name="input">The input</param>
         public abstract void Add(T input);
 
+        /// <summary>
+        /// Add a set of inputs into the bloom filter.
+        /// </summary>
+        /// <param name="inputs">The set of inputs</param>
         public void Add(IEnumerable<T> inputs)
         {
             Parallel.ForEach(inputs, i => Add(i));
         }
 
+        /// <summary>
+        /// Check if the given input has been added to the bloom filter.
+        /// </summary>
+        /// <param name="input">The input</param>
+        /// <returns>True if it has been added. False if not.</returns>
         public abstract bool Contains(T input);
 
+
+        /// <summary>
+        /// Reset the bloom filter to its original state.
+        /// </summary>
+        public abstract void Reset();
+
+        /// <summary>
+        /// Return the indices in the bloom filter that should be 'set' for the given input.
+        /// </summary>
+        /// <param name="input">The input</param>
+        /// <returns>The hash</returns>
         protected internal IEnumerable<uint> Hash(T input)
         {
             return _hashFunctions.Select(x => x.GenerateHash(input) % OptimalVectorSize).Distinct();

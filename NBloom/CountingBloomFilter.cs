@@ -47,7 +47,7 @@ namespace NBloom
             }
         }
 
-        public void Clear()
+        public override void Reset()
         {
             Array.Clear(Vector, 0, Vector.Length);
         }

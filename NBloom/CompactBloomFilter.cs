@@ -31,7 +31,7 @@ namespace NBloom
             return indices.All(i => Vector[(int)i]);
         }
 
-        public void Clear()
+        public override void Reset()
         {
             Vector.SetAll(false);
         }

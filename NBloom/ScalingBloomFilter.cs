@@ -6,7 +6,7 @@ namespace NBloom
 {
     public class ScalingBloomFilter<T> : BloomFilter<T>
     {
-        private readonly bool[][] _vector;
+        private bool[][] _vector;
 
         private const float FILL_RATIO = 0.5f;
         private const byte GROWTH_RATIO = 2;
@@ -15,8 +15,7 @@ namespace NBloom
         public ScalingBloomFilter(uint setSize, float falsePositiveRate, Func<T, byte[]> inputToBytes)
             : base(setSize, falsePositiveRate, inputToBytes)
         {
-            _vector = new bool[OptimalHashCount][];
-
+            InitVector();
             InitSlices();
         }
 
@@ -40,18 +39,26 @@ namespace NBloom
             return true;
         }
 
-        private static int RoundToNearestMultiple(uint num, int factor)
+        public override void Reset() => InitVector();
+
+        private void InitVector()
         {
-            return (int)Math.Round(num / (double)factor, MidpointRounding.AwayFromZero) * factor;
+            _vector = new bool[OptimalHashCount][];
         }
 
         private void InitSlices()
         {
             var sliceSize = RoundToNearestMultiple(OptimalVectorSize, OptimalHashCount);
+
             for (var i = 0; i < _vector.Length; i++)
             {
                 _vector[i] = new bool[sliceSize];
             }
+        }
+
+        private static int RoundToNearestMultiple(uint num, int factor)
+        {
+            return (int)Math.Round(num / (double)factor, MidpointRounding.AwayFromZero) * factor;
         }
     }
 }
