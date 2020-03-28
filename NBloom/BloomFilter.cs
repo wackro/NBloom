@@ -55,8 +55,8 @@ namespace NBloom
             }
         }
 
-        private float _falsePositiveRate;
-        private uint _setSize;
+        private readonly float _falsePositiveRate;
+        private readonly uint _setSize;
         private readonly IHashFunction<T>[] _hashFunctions;
 
         /// <summary>
