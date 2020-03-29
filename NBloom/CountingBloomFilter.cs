@@ -8,13 +8,13 @@ namespace NBloom
     {
         internal byte[] Vector;
 
-        public CountingBloomFilter(uint setSize, float falsePositiveRate, Func<T, byte[]> inputToBytes)
-            : base(setSize, falsePositiveRate, inputToBytes)
+        public CountingBloomFilter(uint setSize, float falsePositiveRate, Func<T, byte[]> inputToBytes, bool threadsafe = false)
+            : base(setSize, falsePositiveRate, inputToBytes, threadsafe)
         {
             Vector = new byte[OptimalVectorSize];
         }
 
-        public override void Add(T input)
+        protected override void AddInput(T input)
         {
             var indices = Hash(input);
 

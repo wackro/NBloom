@@ -37,6 +37,22 @@ namespace NBloom.Test
         }
 
         [Fact]
+        public void Add__RemoveWhenIndicesAreZero__DoesNotUnderflow()
+        {
+            var bloomFilter = new CountingBloomFilter<string>(1000, 0.001f, x => Encoding.ASCII.GetBytes(x));
+
+            Assert.Equal(0, bloomFilter.Vector[0]);
+            Assert.Equal(0, bloomFilter.Vector[1]);
+            Assert.Equal(0, bloomFilter.Vector[2]);
+
+            bloomFilter.Remove("test");
+
+            Assert.Equal(0, bloomFilter.Vector[0]);
+            Assert.Equal(0, bloomFilter.Vector[1]);
+            Assert.Equal(0, bloomFilter.Vector[2]);
+        }
+
+        [Fact]
         public void Remove__AnyInput__DecrementsArrayPositionsByOne()
         {
             var bloomFilter = new CountingBloomFilter<string>(1000, 0.001f, x => Encoding.ASCII.GetBytes(x));
@@ -61,22 +77,6 @@ namespace NBloom.Test
             var bloomFilter = new CountingBloomFilter<string>(1000, 0.001f, x => Encoding.ASCII.GetBytes(x));
 
             bloomFilter.Remove("test");
-        }
-
-        [Fact]
-        public void Add__RemoveWhenIndicesAreZero__DoesNotUnderflow()
-        {
-            var bloomFilter = new CountingBloomFilter<string>(1000, 0.001f, x => Encoding.ASCII.GetBytes(x));
-
-            Assert.Equal(0, bloomFilter.Vector[0]);
-            Assert.Equal(0, bloomFilter.Vector[1]);
-            Assert.Equal(0, bloomFilter.Vector[2]);
-
-            bloomFilter.Remove("test");
-
-            Assert.Equal(0, bloomFilter.Vector[0]);
-            Assert.Equal(0, bloomFilter.Vector[1]);
-            Assert.Equal(0, bloomFilter.Vector[2]);
         }
     }
 }

@@ -12,14 +12,14 @@ namespace NBloom
         private const byte GROWTH_RATIO = 2;
         private const float TIGHTENING_RATIO = 0.8f;
 
-        public ScalingBloomFilter(uint setSize, float falsePositiveRate, Func<T, byte[]> inputToBytes)
-            : base(setSize, falsePositiveRate, inputToBytes)
+        public ScalingBloomFilter(uint setSize, float falsePositiveRate, Func<T, byte[]> inputToBytes, bool threadsafe = false)
+            : base(setSize, falsePositiveRate, inputToBytes, threadsafe)
         {
             InitVector();
             InitSlices();
         }
 
-        public override void Add(T input)
+        protected override void AddInput(T input)
         {
             // if(fill ratio isn't met)
             //  add it

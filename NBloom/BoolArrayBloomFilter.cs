@@ -8,13 +8,13 @@ namespace NBloom
     {
         internal readonly bool[] Vector;
 
-        public BoolArrayBloomFilter(uint setSize, float falsePositiveRate, Func<T, byte[]> convertToBytes)
-            : base(setSize, falsePositiveRate, convertToBytes)
+        public BoolArrayBloomFilter(uint setSize, float falsePositiveRate, Func<T, byte[]> convertToBytes, bool threadsafe = false)
+            : base(setSize, falsePositiveRate, convertToBytes, threadsafe)
         {
             Vector = new bool[OptimalVectorSize];
         }
 
-        public override void Add(T input)
+        protected override void AddInput(T input)
         {
             var indices = Hash(input);
 

@@ -9,7 +9,7 @@ namespace NBloom
     public abstract class BloomFilter<T>
     {
         /// <summary>
-        /// Returns the false positive rate for this bloom filter.
+        /// The false positive rate for this bloom filter.
         /// </summary>
         public float FalsePositiveRate
         {
@@ -22,7 +22,7 @@ namespace NBloom
         private uint? _optimalVectorSize;
 
         /// <summary>
-        /// Returns the optimal vector size (m) for this bloom filter.
+        /// The optimal vector size (m) for this bloom filter.
         /// </summary>
         protected internal uint OptimalVectorSize
         {
@@ -40,7 +40,7 @@ namespace NBloom
         private ushort? _optimalHashCount;
 
         /// <summary>
-        /// Returns the optimal number of hashes (k) for this bloom filter.
+        /// The optimal number of hashes (k) for this bloom filter.
         /// </summary>
         internal ushort OptimalHashCount
         {
@@ -58,6 +58,9 @@ namespace NBloom
         private readonly float _falsePositiveRate;
         private readonly uint _setSize;
         private readonly IHashFunction<T>[] _hashFunctions;
+        private readonly bool _threadsafe;
+
+        private readonly object _addLock = new object();
 
         /// <summary>
         /// Instantiates a new bloom filter. The default hashing function (Murmurhash) will be used.
@@ -65,8 +68,9 @@ namespace NBloom
         /// <param name="setSize">The number of elements in the bloom filter (m)</param>
         /// <param name="falsePositiveRate">The maximum false positive rate</param>
         /// <param name="inputToBytes">A delegate to turn <typeparamref name="T"/> into a byte array.</param>
-        protected BloomFilter(uint setSize, float falsePositiveRate, Func<T, byte[]> inputToBytes)
-            : this (setSize, falsePositiveRate, new MurmurHashFactory<T>(inputToBytes))
+        /// <param name="threadsafe">If <see langword="true"/>, only one thread will be allowed to call Add() at a time.
+        protected BloomFilter(uint setSize, float falsePositiveRate, Func<T, byte[]> inputToBytes, bool threadSafe = false)
+            : this (setSize, falsePositiveRate, new MurmurHashFactory<T>(inputToBytes), threadSafe)
         {
             if (inputToBytes == null)
             {
@@ -80,7 +84,8 @@ namespace NBloom
         /// <param name="setSize">The number of elements in the bloom filter (m)</param>
         /// <param name="falsePositiveRate">The maximum false positive rate</param>
         /// <param name="hashFunctionFactory">The custom hash function factory</param>
-        protected BloomFilter(uint setSize, float falsePositiveRate, IHashFunctionFactory<T> hashFunctionFactory)
+        /// <param name="threadsafe">If <see langword="true"/>, only one thread will be allowed to call Add() at a time.
+        protected BloomFilter(uint setSize, float falsePositiveRate, IHashFunctionFactory<T> hashFunctionFactory, bool threadsafe = false)
         {
             if (setSize == 0)
             {
@@ -100,13 +105,33 @@ namespace NBloom
             _setSize = setSize;
             _falsePositiveRate = falsePositiveRate;
             _hashFunctions = hashFunctionFactory.GenerateHashFunctions(OptimalHashCount);
+            _threadsafe = threadsafe;
         }
 
         /// <summary>
         /// Add an input into the bloom filter.
         /// </summary>
         /// <param name="input">The input</param>
-        public abstract void Add(T input);
+        protected abstract void AddInput(T input);
+
+        /// <summary>
+        /// Add an input into the bloom filter.
+        /// </summary>
+        /// <param name="input"></param>
+        public void Add(T input)
+        {
+            if (!_threadsafe)
+            {
+                AddInput(input);
+            }
+            else
+            {
+                lock (_addLock)
+                {
+                    AddInput(input);
+                }
+            }
+        }
 
         /// <summary>
         /// Add a set of inputs into the bloom filter.
@@ -114,7 +139,17 @@ namespace NBloom
         /// <param name="inputs">The set of inputs</param>
         public void Add(IEnumerable<T> inputs)
         {
-            Parallel.ForEach(inputs, i => Add(i));
+            if (!_threadsafe)
+            {
+                Parallel.ForEach(inputs, i => AddInput(i));
+            }
+            else
+            {
+                lock (_addLock)
+                {
+                    Parallel.ForEach(inputs, i => AddInput(i));
+                }
+            }
         }
 
         /// <summary>

@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Text;
+using Moq;
 using Xunit;
 
 namespace NBloom.Test
@@ -10,11 +11,9 @@ namespace NBloom.Test
         [Fact]
         public void Initialisation__JustInitialised__ContainsAllZeroes()
         {
-            var expectedInitialValue = false;
+            var bloomFilter = new BoolArrayBloomFilter<string>(10, 0.001f, x => Encoding.ASCII.GetBytes(x));
 
-            var bloomFilter = new BoolArrayBloomFilter<string>(10000, 0.001f, x => Encoding.ASCII.GetBytes(x));
-
-            Assert.All(bloomFilter.Vector, x => Assert.Equal(expectedInitialValue, x));
+            Assert.DoesNotContain(true, bloomFilter.Vector);
         }
 
         [Fact]
@@ -48,7 +47,7 @@ namespace NBloom.Test
             Assert.Equal((uint)bloomFilter.Vector.Length, bloomFilter.OptimalVectorSize);
         }
 
-        [Theory(Skip ="is the formula for optimal m correct?")]
+        [Theory(Skip = "is the formula for optimal m correct?")]
         [InlineData(0.1f)]
         [InlineData(0.01f)]
         [InlineData(0.001f)]
