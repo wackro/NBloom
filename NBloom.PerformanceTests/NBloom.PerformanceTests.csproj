@@ -6,6 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="StyleCop.Cache" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\NBloom\NBloom.csproj" />
   </ItemGroup>
 

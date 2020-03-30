@@ -1,9 +1,10 @@
-﻿using System;
-using System.Collections;
-using System.Linq;
-
-namespace NBloom
+﻿namespace NBloom
 {
+    using System;
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.Linq;
+
     public class CompactBloomFilter<T> : BloomFilter<T>
     {
         internal readonly BitArray Vector;
@@ -14,26 +15,22 @@ namespace NBloom
             Vector = new BitArray((int)OptimalVectorSize);
         }
 
-        protected override void AddInput(T input)
+        public override void Clear()
         {
-            var indices = Hash(input);
+            Vector.SetAll(false);
+        }
 
-            foreach (var index in indices)
+        protected override void AddToVector(IEnumerable<uint> hash)
+        {
+            foreach (var index in hash)
             {
                 Vector[(int)index] = true;
             }
         }
 
-        public override bool Contains(T value)
+        protected override bool VectorContains(IEnumerable<uint> hash)
         {
-            var indices = Hash(value);
-
-            return indices.All(i => Vector[(int)i]);
-        }
-
-        public override void Reset()
-        {
-            Vector.SetAll(false);
+            return hash.All(i => Vector[(int)i]);
         }
     }
 }

@@ -69,7 +69,7 @@ namespace NBloom.Test
             bloomfilter.Vector[10] = true;
             bloomfilter.Vector[15] = true;
 
-            bloomfilter.Reset();
+            bloomfilter.Clear();
 
             Assert.All(bloomfilter.Vector, x => Assert.False(x));
         }

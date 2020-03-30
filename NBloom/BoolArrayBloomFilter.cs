@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace NBloom
+﻿namespace NBloom
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+
     public class BoolArrayBloomFilter<T> : BloomFilter<T>
     {
         internal readonly bool[] Vector;
@@ -14,26 +14,22 @@ namespace NBloom
             Vector = new bool[OptimalVectorSize];
         }
 
-        protected override void AddInput(T input)
+        public override void Clear()
         {
-            var indices = Hash(input);
+            Array.Clear(Vector, 0, Vector.Length);
+        }
 
-            foreach (var index in indices)
+        protected override void AddToVector(IEnumerable<uint> hash)
+        {
+            foreach (var index in hash)
             {
                 Vector[index] = true;
             }
         }
 
-        public override bool Contains(T value)
+        protected override bool VectorContains(IEnumerable<uint> hash)
         {
-            var indices = Hash(value);
-
-            return indices.All(i => Vector[i]);
-        }
-
-        public override void Reset()
-        {
-            Array.Clear(Vector, 0, Vector.Length);
+            return hash.All(i => Vector[i]);
         }
     }
 }

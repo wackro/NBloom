@@ -1,16 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace NBloom
+﻿namespace NBloom
 {
+    using System;
+    using System.Collections.Generic;
+
     public class ScalingBloomFilter<T> : BloomFilter<T>
     {
-        private bool[][] _vector;
-
         private const float FILL_RATIO = 0.5f;
         private const byte GROWTH_RATIO = 2;
         private const float TIGHTENING_RATIO = 0.8f;
+
+        private bool[][] _vector;
 
         public ScalingBloomFilter(uint setSize, float falsePositiveRate, Func<T, byte[]> inputToBytes, bool threadsafe = false)
             : base(setSize, falsePositiveRate, inputToBytes, threadsafe)
@@ -19,7 +18,9 @@ namespace NBloom
             InitSlices();
         }
 
-        protected override void AddInput(T input)
+        public override void Clear() => InitVector();
+
+        protected override void AddToVector(IEnumerable<uint> hash)
         {
             // if(fill ratio isn't met)
             //  add it
@@ -32,14 +33,17 @@ namespace NBloom
             //  }
         }
 
-        public override bool Contains(T input)
+        protected override bool VectorContains(IEnumerable<uint> hash)
         {
             // if
 
             return true;
         }
 
-        public override void Reset() => InitVector();
+        private static int RoundToNearestMultiple(uint num, int factor)
+        {
+            return (int)Math.Round(num / (double)factor, MidpointRounding.AwayFromZero) * factor;
+        }
 
         private void InitVector()
         {
@@ -54,11 +58,6 @@ namespace NBloom
             {
                 _vector[i] = new bool[sliceSize];
             }
-        }
-
-        private static int RoundToNearestMultiple(uint num, int factor)
-        {
-            return (int)Math.Round(num / (double)factor, MidpointRounding.AwayFromZero) * factor;
         }
     }
 }

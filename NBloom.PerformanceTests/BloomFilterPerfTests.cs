@@ -28,11 +28,11 @@ namespace NBloom.PerformanceTests
                 testInputs[i] = i;
             }
 
-            Action test1 = () => Output("boolarray add()", MeasureTime(() => b.Add(testInputs), () => b.Reset(), 100, 10));
-            Action test2 = () => Output("compact add()", MeasureTime(() => b2.Add(testInputs), () => b2.Reset(), 100, 10));
+            Action test1 = () => Output("boolarray add()", MeasureTime(() => b.Add(testInputs), () => b.Clear(), 100, 10));
+            Action test2 = () => Output("compact add()", MeasureTime(() => b2.Add(testInputs), () => b2.Clear(), 100, 10));
 
-            Action test3 = () => Output("boolarray threadsafe add()", MeasureTime(() => b3.Add(testInputs), () => b3.Reset(), 100, 10));
-            Action test4 = () => Output("compact threadsafe add()", MeasureTime(() => b4.Add(testInputs), () => b4.Reset(), 100, 10));
+            Action test3 = () => Output("boolarray threadsafe add()", MeasureTime(() => b3.Add(testInputs), () => b3.Clear(), 100, 10));
+            Action test4 = () => Output("compact threadsafe add()", MeasureTime(() => b4.Add(testInputs), () => b4.Clear(), 100, 10));
 
             Task.WaitAll(new[] { Task.Run(test1), Task.Run(test2), Task.Run(test3), Task.Run(test4) });
 
